@@ -1,0 +1,80 @@
+:root {
+  --bg: #0a0f1e;
+  --text: #edf2f7;
+  --highlight: #00ffff;
+  --nav-link: #8fa1b3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.hero {
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.highlight {
+  color: var(--highlight);
+  text-shadow: 0 0 8px var(--highlight);
+}
+
+.typing {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.1%, 100% { opacity: 0; }
+}
+
+.nav {
+  list-style: none;
+  display: inline-flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav a {
+  color: var(--nav-link);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.nav a:hover {
+  color: var(--text);
+}
+
+.socials a {
+  color: var(--nav-link);
+  font-size: 1.5rem;
+  margin: 0 0.75rem;
+  transition: color 0.3s;
+}
+
+.socials a:hover {
+  color: var(--highlight);
+}
