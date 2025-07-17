@@ -15,15 +15,25 @@ body {
   background-color: var(--bg);
   color: var(--text);
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
+main {
+  display: flex;
+  flex-direction: column;
+}
+
 
 .hero {
   text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
 }
+
 
 h1 {
   font-size: 3rem;
@@ -77,4 +87,107 @@ h1 {
 
 .socials a:hover {
   color: var(--highlight);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.section {
+  min-height: 100vh;
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+
+.section h2 {
+  font-size: 2rem;
+  color: var(--highlight);
+  margin-bottom: 1rem;
+}
+
+.resume-link {
+  font-size: 1.2rem;
+  color: var(--highlight);
+  text-decoration: underline;
+}
+
+.resume-link:hover {
+  color: var(--text);
+}
+
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.project-card {
+  background-color: #111729;
+  border-radius: 1rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.project-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+}
+
+.card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.card-content h3 {
+  font-size: 1.25rem;
+  color: var(--highlight);
+  margin-bottom: 0.5rem;
+}
+
+.card-content p {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badges span {
+  background-color: #00ffff22;
+  border: 1px solid var(--highlight);
+  color: var(--highlight);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
