@@ -1,14 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Typing effect
   const words = [
-    'programmer',
-    'teacher',
-    'data scientist',
-    'youtuber',
-    'content creator',
-    'soccer player',
-    'runner',
-    'basketball player'
+    'engineer',
+    'builder',
+    'competitor',
+    'maker'
   ];
 
   let currentWordIndex = 0;
@@ -39,27 +35,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTimeout(() => typeWord(words[currentWordIndex]), delayBetweenWords / 2);
 
-  // Timeline animation
-  const timelineEvents = document.querySelectorAll('.timeline-event');
-
-  const observer = new IntersectionObserver(entries => {
+  // Scroll reveal — staggered for project cards, fade for other elements
+  const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
       }
     });
-  }, {
-    threshold: 0.5
+  }, { threshold: 0.15 });
+
+  // Timeline events
+  document.querySelectorAll('.timeline-event').forEach(el => {
+    revealObserver.observe(el);
   });
 
-  timelineEvents.forEach(event => {
-    observer.observe(event);
+  // Featured cards — staggered
+  document.querySelectorAll('.featured-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+    el.classList.add('reveal');
+    revealObserver.observe(el);
+  });
+
+  // Secondary project cards — staggered
+  document.querySelectorAll('.project-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+    el.classList.add('reveal');
+    revealObserver.observe(el);
   });
 
   // Image slideshow
   const slides = document.querySelectorAll('.profile-slide');
   let currentSlide = 0;
-  const slideInterval = 3000; // 3 seconds
 
   function nextSlide() {
     slides[currentSlide].classList.remove('active');
@@ -67,5 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
     slides[currentSlide].classList.add('active');
   }
 
-  setInterval(nextSlide, slideInterval);
+  setInterval(nextSlide, 3000);
+
+  // Nav background on scroll
+  const nav = document.querySelector('.site-nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
 });

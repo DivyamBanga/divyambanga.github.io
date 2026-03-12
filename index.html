@@ -3,135 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Divyam Banga</title>
+  <title>Div Banga</title>
+  <meta name="description" content="Divyam Banga — engineering student at Waterloo. Projects, hackathons, and things I've built.">
+  <meta property="og:title" content="Div Banga">
+  <meta property="og:description" content="Engineering student at Waterloo. Projects, hackathons, and things I've built.">
+  <meta property="og:image" content="assets/Thumbnail.webp">
+  <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="assets/favicon.png"/>
   <!-- Font Awesome for social icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <nav class="site-nav">
+    <span class="nav-name">Div</span>
+    <ul class="nav">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="assets/DivResume.pdf" target="_blank">Resume</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
   <header class="hero">
     <h1><span class="highlight">Div</span>yam Banga</h1>
-    <p class="typing">I'm a <span id="typed"></span><span class="cursor">|</span></p>
-    <nav>
-      <ul class="nav">
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="assets/DivResume.pdf" target="_blank">Resume</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+    <p class="tagline">I like building things that work and breaking things that don't.</p>
+    <p class="typing"><span id="typed"></span><span class="cursor">|</span></p>
     <div class="socials">
       <a href="https://www.linkedin.com/in/divyam-banga-363990204/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-
       <a href="https://github.com/DivyamBanga" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-
-      <a href="mailto:divyambanga@gmail.com" title="Email">
-        <i class="fas fa-envelope"></i>
-      </a>
+      <a href="mailto:divyambanga@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
     </div>
   </header>
 
   <main>
     <section id="projects" class="section">
       <h2>Projects</h2>
+
+      <!-- Featured Projects -->
+      <div class="featured-projects">
+        <a href="https://github.com/DivyamBanga/Lucid" class="featured-card" target="_blank">
+          <div class="featured-img-wrap">
+            <img src="assets/logo.png" alt="Lucid — adaptive study app using biometrics">
+          </div>
+          <div class="featured-content">
+            <div class="featured-header">
+              <h3>Lucid</h3>
+              <span class="award-tag">HackCanada 2026</span>
+            </div>
+            <p>Your phone camera reads your heart rate, blink rate, and breathing to detect when you've stopped learning. The study session adapts in real time — simplifies content when you're frustrated, triggers breaks when you're fatigued.</p>
+            <div class="badges">
+              <span>React</span>
+              <span>Node.js</span>
+              <span>WebSocket</span>
+              <span>Android</span>
+              <span>Ollama</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://github.com/Vibhor7-7/Cortex-CxC" class="featured-card" target="_blank">
+          <div class="featured-img-wrap">
+            <img src="assets/Thumbnail.webp" alt="Cortex — 3D semantic map of AI conversations">
+          </div>
+          <div class="featured-content">
+            <div class="featured-header">
+              <h3>Cortex</h3>
+              <span class="award-tag">CxC Hackathon Winner</span>
+            </div>
+            <p>Turns your ChatGPT and Claude exports into a 3D semantic map you can fly through. Similar conversations cluster together. Search across your entire AI history, and inject past context into new chats via MCP — no copy-pasting.</p>
+            <div class="badges">
+              <span>Three.js</span>
+              <span>FastAPI</span>
+              <span>Ollama</span>
+              <span>UMAP</span>
+              <span>MCP</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://github.com/Doomsy1/NASA" class="featured-card" target="_blank">
+          <div class="featured-img-wrap">
+            <img src="assets/s5.png" alt="myFarm — NASA satellite data for farmers">
+          </div>
+          <div class="featured-content">
+            <div class="featured-header">
+              <h3>myFarm</h3>
+              <span class="award-tag">NASA Space Apps Winner</span>
+            </div>
+            <p>Helps farmers in low-income areas grow more crops using NASA satellite data. Includes a rover that plants seeds in optimal soil, data maps, and a chatbot for guidance.</p>
+            <div class="badges">
+              <span>Python</span>
+              <span>Flask</span>
+              <span>NASA Data</span>
+              <span>Plotly</span>
+              <span>SQLite</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Other Projects -->
       <div class="projects-grid">
-        <!-- Project Cards -->
         <a href="https://github.com/DivyamBanga/Chess-Engine" class="project-card" target="_blank">
-          <img src="assets/s1_.png" alt="Project 1 Screenshot">
+          <img src="assets/s1_.png" alt="Chess engine with AI opponent">
           <div class="card-content">
             <h3>Chess Engine</h3>
-            <p>A fully functional chess game with support for all standard rules, including castling, en passant, checkmate, and stalemate. Includes a computer opponent that calculates the best move within a 5-second thinking window.</p>
+            <p>Full chess game with an AI opponent using minimax and alpha-beta pruning within a 5-second window.</p>
             <div class="badges">
               <span>Java</span>
-          <span>Swing</span>
-          <span>AWT</span>
-          <span>Minimax Algorithm</span>
-          <span>Alpha-Beta Pruning</span>
-          <span>Hashmaps</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/Doomsy1/NASA" class="project-card" target="_blank">
-          <img src="assets/s5.png" alt="Project 2 Screenshot">
-          <div class="card-content">
-            <h3>myFarm</h3>
-            <p>An app to help farmers in low-income areas grow more crops using NASA satellite data. It includes a rover that plants seeds in the best soil and a website with data maps, a farmer forum, chatbot help, and a training simulator.</p>
-            <div class="badges">
-              <span>Python</span>
-      <span>HTML</span>
-      <span>Flask</span>
-      <span>SQlite</span>
-      <span>Jinja</span>
-      <span>Werkzeug</span>
-      <span>Plotly</span>
-      <span>jQuery</span>
-      <span>Bootstrap</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/ScoutApp2024" class="project-card" target="_blank">
-          <img src="assets/s4.jpg" alt="Project 3 Screenshot">
-          <div class="card-content">
-            <h3>Robotics Scouting App</h3>
-            <p>Scouting app developed for FRC Team 4903 to collect real-time match data, analyze team performance, and support strategic alliance decisions. Designed for efficient data entry and seamless sharing among drive team and strategists.</p>
-            <div class="badges">
-              <span>Flutter</span>
-      <span>Firebase</span>
-      <span>Dart</span>
-      <span>C++</span>
-      <span>Swift</span>
-      <span>HTML</span>
-      <span>C</span>
-      <span>Android Studio</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/paint" class="project-card" target="_blank">
-          <img src="assets/paintss.png" alt="Project 4 Screenshot">
-          <div class="card-content">
-            <h3>Paint Clone</h3>
-            <p>This project is a Clash Royale-themed paint application developed with Pygame with a range of drawing tools, image stamps, and file operations.</p>
-            <div class="badges">
-              <span>Python</span>
-      <span>Pygame</span>
-      <span>Tkinter</span>
-      <span>GUI</span>
-      <span>Graphics</span>
-      <span>Events</span>
-      <span>Files</span>
+              <span>Minimax</span>
+              <span>Alpha-Beta</span>
             </div>
           </div>
         </a>
         <a href="https://github.com/DivyamBanga/DarkStar" class="project-card" target="_blank">
-          <img src="assets/s3.png" alt="Project 5 Screenshot">
+          <img src="assets/s3.png" alt="DarkStar multiplayer browser game">
           <div class="card-content">
             <h3>DarkStar</h3>
-            <p>DarkStar is a real-time multiplayer browser game where players navigate a dark star-filled universe, absorb particles to grow, and compete against each other. Featuring an interactive chat, dynamic leaderboard, and engaging graphics, DarkStar offers an immersive gaming experience directly in your browser.</p>
+            <p>Real-time multiplayer browser game. Absorb particles, grow, compete. Live chat and leaderboard.</p>
             <div class="badges">
-              <span>HTML</span>
-      <span>CSS</span>
-      <span>JavaScript</span>
-      <span>Socket.IO</span>
-      <span>Node.js</span>
-      <span>Express</span>
-      <span>Canvas</span>
+              <span>Node.js</span>
+              <span>Socket.IO</span>
+              <span>Canvas</span>
+            </div>
+          </div>
+        </a>
+        <a href="https://github.com/DivyamBanga/ScoutApp2024" class="project-card" target="_blank">
+          <img src="assets/s4.jpg" alt="FRC 4903 scouting app">
+          <div class="card-content">
+            <h3>Scouting App</h3>
+            <p>Real-time match data collection for FRC Team 4903. Used by the drive team during competitions.</p>
+            <div class="badges">
+              <span>Flutter</span>
+              <span>Firebase</span>
+              <span>Dart</span>
+            </div>
+          </div>
+        </a>
+        <a href="https://github.com/DivyamBanga/paint" class="project-card" target="_blank">
+          <img src="assets/paintss.png" alt="Clash Royale themed paint app">
+          <div class="card-content">
+            <h3>Paint Clone</h3>
+            <p>Clash Royale-themed drawing app with custom tools, stamps, and file operations.</p>
+            <div class="badges">
+              <span>Python</span>
+              <span>Pygame</span>
             </div>
           </div>
         </a>
         <a href="https://github.com/DivyamBanga/DivDodge" class="project-card" target="_blank">
-          <img src="assets/divdodgess.png" alt="Project 6 Screenshot">
+          <img src="assets/divdodgess.png" alt="DivDodge Frogger-inspired game">
           <div class="card-content">
             <h3>DivDodge</h3>
-            <p>DivDodge is a Frogger-inspired application featuring three distinct modes (Levels, Infinite, and Two-Player) built with the Swing framework for its graphical user interface and event handling.</p>
+            <p>Frogger-inspired game with three modes: Levels, Infinite, and Two-Player.</p>
             <div class="badges">
               <span>Java</span>
-      <span>Swing</span>
-      <span>GUI</span>
-      <span>OOP</span>
-      <span>Events</span>
-      <span>Animation</span>
-      <span>MVC</span>
+              <span>Swing</span>
             </div>
           </div>
         </a>
@@ -146,27 +177,28 @@
               <img src="assets/d1.webp" class="profile-slide active" alt="Divyam Banga - Picture 1">
               <img src="assets/d2.webp" class="profile-slide" alt="Divyam Banga - Picture 2">
               <img src="assets/d3.webp" class="profile-slide" alt="Divyam Banga - Picture 3">
-              <img src="assets/d4.png" class="profile-slide" alt="Divyam Banga - Picture 4">
+              <img src="assets/d4.webp" class="profile-slide" alt="Divyam Banga - Picture 4">
               <img src="assets/d5.webp" class="profile-slide" alt="Divyam Banga - Picture 5">
               <img src="assets/d6.webp" class="profile-slide" alt="Divyam Banga - Picture 6">
               <img src="assets/d7.webp" class="profile-slide" alt="Divyam Banga - Picture 7">
               <img src="assets/d8.webp" class="profile-slide" alt="Divyam Banga - Picture 8">
               <img src="assets/d9.webp" class="profile-slide" alt="Divyam Banga - Picture 9">
-              <img src="assets/d10.png" class="profile-slide" alt="Divyam Banga - Picture 10">
-              <img src="assets/d11.png" class="profile-slide" alt="Divyam Banga - Picture 11">
-              <img src="assets/d12.png" class="profile-slide" alt="Divyam Banga - Picture 12">
+              <img src="assets/d10.webp" class="profile-slide" alt="Divyam Banga - Picture 10">
+              <img src="assets/d11.webp" class="profile-slide" alt="Divyam Banga - Picture 11">
+              <img src="assets/d12.webp" class="profile-slide" alt="Divyam Banga - Picture 12">
             </div>
           </div>
           <h2>About Me</h2>
           <p class="about-intro">
-            Hey! I'm <span class="highlight">Divyam Banga</span>. I'm a passionate programmer, creator, and competitor. Whether I'm building a multiplayer game, teaching robotics, or chasing down the finish line, I love pushing boundaries and creating impact.
+            I'm Div. I study Management Engineering at Waterloo but spend most of my time building things — games, apps, bots, whatever sounds interesting that week. I also run track, play way too much soccer, and teach robotics to kids who are better at it than I was.
           </p>
-          <div class="about-tags">
-            <span>Full-Stack Dev</span>
-            <span>STEM Mentor</span>
-            <span>Track Runner</span>
-            <span>Hackathon Winner</span>
-            <span>Robotics Programmer</span>
+          <div class="about-currently">
+            <h4>Right now</h4>
+            <ul>
+              <li>Building with LLMs and biometric data</li>
+              <li>Looking for Summer 2026 internships</li>
+              <li>Trying to break my 5K PR</li>
+            </ul>
           </div>
         </div>
         <div class="about-right">
@@ -177,50 +209,50 @@
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2019: First Steps in Coding</h4>
-                  <p>Started learning the basics of programming with Scratch and Python.</p>
+                  <h4>2019: First Lines of Code</h4>
+                  <p>Wrote my first programs in Scratch and Python.</p>
                 </div>
               </li>
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2021: Freshman Year of High School</h4>
-                  <p>Became a member of FRC Team 4903, diving deep into C++ and autonomous systems. Achieved honor roll with distinction for all four years.</p>
+                  <h4>2021: Freshman Year</h4>
+                  <p>Joined FRC Team 4903. Learned C++ and autonomous systems. Honor roll with distinction all four years.</p>
                 </div>
               </li>
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2022: Sophmore Year of High School</h4>
-                  <p>Won "Best Web App" at Massey Hacks for a collaborative learning platform. Founded and lead investing club to promote financial knowledge.</p>
+                  <h4>2022: Sophomore Year</h4>
+                  <p>Won "Best Web App" at MasseyHacks. Founded the investing club.</p>
                 </div>
               </li>
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2023: Junior Year of High School</h4>
-                  <p>Developed an app to help farmers using NASA satellite data, winning NASA space apps challenge. Acheived distinction in numerous math contests.</p>
+                  <h4>2023: Junior Year</h4>
+                  <p>Built myFarm with NASA satellite data. Won NASA Space Apps Challenge. Distinction in multiple math contests.</p>
                 </div>
               </li>
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2024: Senior Year of High School</h4>
-                  <p>Took on the role of lead programmer for the robotics team, mentoring new members.</p>
+                  <h4>2024: Senior Year</h4>
+                  <p>Lead programmer for FRC 4903. Mentored new members and shipped the scouting app.</p>
                 </div>
               </li>
               <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>2025: Got into Waterloo Engineering!</h4>
-                  <p>Started studying Management Engineering at University of Waterloo</p>
+                  <h4>2025: Waterloo Engineering</h4>
+                  <p>Started Management Engineering at University of Waterloo. Built HouseLoo and OptionHarvest.</p>
                 </div>
               </li>
                <li class="timeline-event">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                  <h4>Future: Lifelong Learner</h4>
-                  <p>Continuing to explore new technologies and build innovative projects.</p>
+                  <h4>2026: Building and Competing</h4>
+                  <p>Won CxC AI Hackathon with Cortex. Built Lucid at HackCanada. Shipping more things, entering more hackathons.</p>
                 </div>
               </li>
             </ul>
@@ -231,14 +263,9 @@
 
     <section id="contact" class="section contact-section">
       <div class="contact-wrapper">
-        <h2>Get in Touch</h2>
-        <p>I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
+        <h2>Say hi</h2>
+        <p>Want to build something? I read every email.</p>
         <a href="mailto:divyambanga@gmail.com" class="email-link">divyambanga@gmail.com</a>
-        <div class="contact-socials">
-          <a href="https://www.linkedin.com/in/divyam-banga-363990204/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-          <a href="https://github.com/DivyamBanga" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-          <a href="mailto:divyambanga@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-        </div>
       </div>
     </section>
   </main>
