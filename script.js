@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
         revealObserver.unobserve(entry.target);
+        // Clear stagger delay after reveal so it doesn't affect hover interactions
+        const delay = parseFloat(entry.target.style.transitionDelay) || 0;
+        setTimeout(() => {
+          entry.target.style.transitionDelay = '';
+        }, (delay + 0.5) * 1000 + 100);
       }
     });
   }, { threshold: 0.15 });

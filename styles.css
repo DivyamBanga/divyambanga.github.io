@@ -84,7 +84,6 @@ h1 {
 
 .highlight {
   color: var(--highlight);
-  text-shadow: 0 0 10px var(--highlight);
 }
 
 .typing {
@@ -260,7 +259,7 @@ h1 {
 }
 
 .project-card {
-  background-color: var(--card-bg);
+  background-color: rgba(17, 23, 41, 0.6);
   border-radius: 0.5rem;
   overflow: hidden;
   text-decoration: none;
@@ -317,6 +316,12 @@ h1 {
   font-weight: 500;
 }
 
+.project-card .badges span {
+  background-color: rgba(143, 161, 179, 0.08);
+  border-color: rgba(143, 161, 179, 0.2);
+  color: var(--nav-link);
+}
+
 .about-section {
   background-color: #0c1225;
 }
@@ -351,7 +356,8 @@ h1 {
   height: 320px;
   border-radius: 12px;
   padding: 6px;
-  border: 2px solid rgba(0, 255, 255, 0.3);
+  border: 2px solid rgba(212, 165, 116, 0.25);
+  box-shadow: 0 0 30px rgba(212, 165, 116, 0.08);
   margin: 0 auto 2rem;
   position: relative;
   overflow: hidden;
@@ -420,7 +426,7 @@ h1 {
   content: "~";
   position: absolute;
   left: 0;
-  color: var(--highlight);
+  color: var(--warm);
 }
 
 .about-right {
@@ -479,8 +485,8 @@ h1 {
 
 .contact-section {
   text-align: center;
-  padding-top: 60px;
-  padding-bottom: 80px;
+  padding-top: 40px;
+  padding-bottom: 60px;
 }
 
 .contact-wrapper {
@@ -527,13 +533,15 @@ h1 {
   transform: translateY(0);
 }
 
-/* Hover overrides after reveal */
+/* Hover overrides after reveal — restore snappy 0.3s transition */
 .featured-card.reveal.is-visible:hover {
   transform: translateX(4px);
+  transition: transform 0.3s;
 }
 
 .project-card.reveal.is-visible:hover {
   transform: translateY(-6px);
+  transition: transform 0.3s;
 }
 
 /* Nav scroll state */
@@ -544,6 +552,13 @@ h1 {
 
 .site-nav.scrolled {
   border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Section padding variation */
+@media (min-width: 769px) {
+  #projects {
+    padding-top: 100px;
+  }
 }
 
 /* Mobile nav */
