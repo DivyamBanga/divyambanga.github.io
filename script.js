@@ -100,4 +100,26 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  /* ===== Scroll reveal ===== */
+  const revealEls = document.querySelectorAll('.tile, .pcard');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        el.classList.add('is-visible');
+        io.unobserve(el);
+        // Drop the reveal transition afterwards so it doesn't slow hover effects
+        setTimeout(() => { el.classList.remove('reveal'); el.style.transitionDelay = ''; }, 1200);
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = `${Math.min(i * 0.05, 0.4)}s`;
+      io.observe(el);
+    });
+  }
 });

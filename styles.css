@@ -495,3 +495,30 @@ a:focus-visible, button:focus-visible, .tile:focus-visible {
   .bento { grid-template-columns: 1fr; }
   .tile { grid-column: 1 / -1 !important; grid-row: auto !important; }
 }
+
+/* ===== Scroll reveal ===== */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .cursor, .now-dot { animation: none !important; }
+}
+
+/* ===== Reduced transparency: solid panels instead of frosted glass ===== */
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass: rgba(18, 24, 38, 0.94); --glass-hover: rgba(28, 36, 54, 0.97); }
+  [data-theme="light"] { --glass: rgba(255, 255, 255, 0.96); --glass-hover: #ffffff; }
+  [data-theme="dark"]  { --glass: rgba(18, 24, 38, 0.94); --glass-hover: rgba(28, 36, 54, 0.97); }
+  .topbar, .tile, .pcard { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
+  :root:not([data-theme]) { --glass: rgba(255, 255, 255, 0.96); --glass-hover: #ffffff; }
+}
