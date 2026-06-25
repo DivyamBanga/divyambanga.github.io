@@ -329,6 +329,60 @@ a.tile:hover, .tile--link:hover {
 }
 .btn:hover { background: var(--glass-hover); transform: translateY(-2px); }
 
+/* ===== Awards list ===== */
+.award-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.1rem; }
+.award-list li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; }
+.award-list i { color: var(--accent); margin-top: 0.28rem; font-size: 0.85rem; }
+.award-list strong { font-weight: 600; }
+.award-list .sub { color: var(--muted); }
+
+/* ===== About tile ===== */
+.about-bio { font-size: 0.92rem; color: var(--muted); margin-bottom: 0.9rem; }
+.now { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; margin-bottom: 0.9rem; }
+.now-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  animation: pulse 2.2s infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 var(--chip-border); }
+  70%  { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.now-text { color: var(--text); }
+.about-meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.about-meta i { color: var(--accent); margin-right: 0.35rem; }
+
+/* ===== Contact tile ===== */
+.contact-email {
+  display: inline-block;
+  width: fit-content;
+  margin: 0.4rem 0 0.9rem;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--chip-border);
+  transition: border-color 0.25s;
+}
+.contact-email:hover { border-color: var(--accent); }
+.contact-actions { display: flex; align-items: center; gap: 0.6rem; margin-top: auto; }
+.icon-link {
+  display: grid; place-items: center;
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  color: var(--muted);
+  transition: color 0.25s, border-color 0.25s, transform 0.25s;
+}
+.icon-link:hover { color: var(--accent); border-color: var(--chip-border); transform: translateY(-2px); }
+
 /* ===== Footer ===== */
 .foot {
   max-width: var(--maxw);

@@ -23,4 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('theme', next);
     syncIcon();
   });
+
+  /* ===== Local time (About tile) ===== */
+  const clock = document.getElementById('localtime');
+  if (clock) {
+    const tick = () => {
+      clock.textContent = new Date().toLocaleTimeString('en-CA', {
+        timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit'
+      }) + ' ET';
+    };
+    tick();
+    setInterval(tick, 30000);
+  }
 });
