@@ -268,6 +268,38 @@ a.tile:hover, .tile--link:hover {
 }
 .projects-tile__big span { color: var(--accent); }
 
+/* ===== Experience list ===== */
+.exp-list { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.1rem; }
+.exp-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 0.6rem;
+  position: relative;
+  padding-left: 1.05rem;
+}
+.exp-list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.5rem;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.exp-list li.current::before { background: var(--accent); box-shadow: 0 0 0 4px var(--chip-bg); }
+.exp-role { grid-column: 1; grid-row: 1; font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; }
+.exp-co { grid-column: 1; grid-row: 2; color: var(--muted); font-size: 0.84rem; }
+.exp-when { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.exp-yc {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--accent);
+  border: 1px solid var(--chip-border);
+  border-radius: 5px;
+  padding: 0 0.3rem;
+  margin-left: 0.2rem;
+  vertical-align: middle;
+}
+
 /* ===== Chips / badges ===== */
 .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; padding-top: 0.8rem; }
 .chips span {
