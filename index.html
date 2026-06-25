@@ -23,257 +23,55 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <nav class="site-nav">
-    <a href="#" class="nav-name">Div</a>
-    <ul class="nav">
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="assets/DivyamResumeSv.pdf" target="_blank" rel="noopener">Resume</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-
-  <header class="hero">
-    <h1><span class="highlight">Div</span>yam Banga</h1>
-    <p class="tagline">I like building things that work and breaking things that don't.</p>
-    <p class="typing" aria-hidden="true"><span id="typed"></span><span class="cursor">|</span></p>
-    <div class="socials">
-      <a href="https://www.linkedin.com/in/divyam-banga-363990204/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
-      <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-      <a href="mailto:divyambanga@gmail.com" title="Email" aria-label="Email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
-    </div>
+  <header class="topbar">
+    <a href="#" class="brand">Div<span class="dot">.</span></a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="assets/DivyamResumeSv.pdf" class="btn" target="_blank" rel="noopener">Résumé</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light or dark theme">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+      </button>
+    </nav>
   </header>
 
-  <main>
-    <section id="projects" class="section">
-      <h2>Projects</h2>
+  <main class="wrap">
+    <section class="bento" aria-label="Overview">
 
-      <!-- Featured Projects -->
-      <div class="featured-projects">
-        <a href="https://github.com/DivyamBanga/Lucid" class="featured-card" target="_blank" rel="noopener">
-          <div class="featured-img-wrap">
-            <img loading="lazy" decoding="async" src="assets/logo.png" alt="Lucid, adaptive study app using biometrics">
-          </div>
-          <div class="featured-content">
-            <div class="featured-header">
-              <h3>Lucid</h3>
-              <span class="award-tag">HackCanada Finalist</span>
-            </div>
-            <p>Uses your phone camera to read heart rate, blink rate, and breathing to detect when you've stopped learning. The study session adapts in real time, simplifying content when you're frustrated and triggering breaks when you're fatigued.</p>
-            <div class="badges">
-              <span>React</span>
-              <span>Node.js</span>
-              <span>WebSocket</span>
-              <span>Android</span>
-              <span>Ollama</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="https://github.com/Vibhor7-7/Cortex-CxC" class="featured-card" target="_blank" rel="noopener">
-          <div class="featured-img-wrap">
-            <img loading="lazy" decoding="async" src="assets/Thumbnail.webp" alt="Cortex, 3D semantic map of AI conversations">
-          </div>
-          <div class="featured-content">
-            <div class="featured-header">
-              <h3>Cortex</h3>
-              <span class="award-tag">CxC Hackathon Winner</span>
-            </div>
-            <p>Turns your ChatGPT and Claude exports into a 3D semantic map you can fly through. Similar conversations cluster together automatically. Search your entire AI history and pull past context into new chats through MCP.</p>
-            <div class="badges">
-              <span>Three.js</span>
-              <span>FastAPI</span>
-              <span>Ollama</span>
-              <span>UMAP</span>
-              <span>MCP</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="https://github.com/Doomsy1/NASA" class="featured-card" target="_blank" rel="noopener">
-          <div class="featured-img-wrap">
-            <img loading="lazy" decoding="async" src="assets/s5.png" alt="myFarm, NASA satellite data for farmers">
-          </div>
-          <div class="featured-content">
-            <div class="featured-header">
-              <h3>myFarm</h3>
-              <span class="award-tag">NASA Space Apps Winner</span>
-            </div>
-            <p>Helps farmers in low-income areas grow more crops using NASA satellite data. Includes a rover that plants seeds in optimal soil, data maps, and a chatbot for guidance.</p>
-            <div class="badges">
-              <span>Python</span>
-              <span>Flask</span>
-              <span>NASA Data</span>
-              <span>Plotly</span>
-              <span>SQLite</span>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Other Projects -->
-      <div class="projects-grid">
-        <a href="https://github.com/DivyamBanga/Chess-Engine" class="project-card" target="_blank" rel="noopener">
-          <img loading="lazy" decoding="async" src="assets/s1_.png" alt="Chess engine with AI opponent">
-          <div class="card-content">
-            <h3>Chess Engine</h3>
-            <p>Full chess game with an AI opponent using minimax and alpha-beta pruning within a 5-second window.</p>
-            <div class="badges">
-              <span>Java</span>
-              <span>Minimax</span>
-              <span>Alpha-Beta</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/DarkStar" class="project-card" target="_blank" rel="noopener">
-          <img loading="lazy" decoding="async" src="assets/s3.png" alt="DarkStar multiplayer browser game">
-          <div class="card-content">
-            <h3>DarkStar</h3>
-            <p>Real-time multiplayer browser game. Absorb particles, grow, compete. Live chat and leaderboard.</p>
-            <div class="badges">
-              <span>Node.js</span>
-              <span>Socket.IO</span>
-              <span>Canvas</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/ScoutApp2024" class="project-card" target="_blank" rel="noopener">
-          <img loading="lazy" decoding="async" src="assets/s4.jpg" alt="FRC 4903 scouting app">
-          <div class="card-content">
-            <h3>Scouting App</h3>
-            <p>Real-time match data collection for FRC Team 4903. Used by the drive team during competitions.</p>
-            <div class="badges">
-              <span>Flutter</span>
-              <span>Firebase</span>
-              <span>Dart</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/paint" class="project-card" target="_blank" rel="noopener">
-          <img loading="lazy" decoding="async" src="assets/paintss.png" alt="Clash Royale themed paint app">
-          <div class="card-content">
-            <h3>Paint Clone</h3>
-            <p>Clash Royale-themed drawing app with custom tools, stamps, and file operations.</p>
-            <div class="badges">
-              <span>Python</span>
-              <span>Pygame</span>
-            </div>
-          </div>
-        </a>
-        <a href="https://github.com/DivyamBanga/DivDodge" class="project-card" target="_blank" rel="noopener">
-          <img loading="lazy" decoding="async" src="assets/divdodgess.png" alt="DivDodge Frogger-inspired game">
-          <div class="card-content">
-            <h3>DivDodge</h3>
-            <p>Frogger-inspired game with three modes: Levels, Infinite, and Two-Player.</p>
-            <div class="badges">
-              <span>Java</span>
-              <span>Swing</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section id="about" class="section about-section">
-      <div class="about-wrapper">
-        <div class="about-left">
-          <div class="profile-glow">
-            <div class="slideshow-container">
-              <img loading="lazy" decoding="async" src="assets/d1.webp" class="profile-slide active" alt="Divyam Banga - Picture 1">
-              <img loading="lazy" decoding="async" src="assets/d2.webp" class="profile-slide" alt="Divyam Banga - Picture 2">
-              <img loading="lazy" decoding="async" src="assets/d3.webp" class="profile-slide" alt="Divyam Banga - Picture 3">
-              <img loading="lazy" decoding="async" src="assets/d4.webp" class="profile-slide" alt="Divyam Banga - Picture 4">
-              <img loading="lazy" decoding="async" src="assets/d5.webp" class="profile-slide" alt="Divyam Banga - Picture 5">
-              <img loading="lazy" decoding="async" src="assets/d6.webp" class="profile-slide" alt="Divyam Banga - Picture 6">
-              <img loading="lazy" decoding="async" src="assets/d7.webp" class="profile-slide" alt="Divyam Banga - Picture 7">
-              <img loading="lazy" decoding="async" src="assets/d8.webp" class="profile-slide" alt="Divyam Banga - Picture 8">
-              <img loading="lazy" decoding="async" src="assets/d9.webp" class="profile-slide" alt="Divyam Banga - Picture 9">
-              <img loading="lazy" decoding="async" src="assets/d10.webp" class="profile-slide" alt="Divyam Banga - Picture 10">
-              <img loading="lazy" decoding="async" src="assets/d11.webp" class="profile-slide" alt="Divyam Banga - Picture 11">
-              <img loading="lazy" decoding="async" src="assets/d12.webp" class="profile-slide" alt="Divyam Banga - Picture 12">
-            </div>
-          </div>
-          <h2>About Me</h2>
-          <p class="about-intro">
-            I'm Div. I study Management Engineering at Waterloo but spend most of my time building things. Games, apps, bots, whatever sounds interesting that week. I also run track, play way too much soccer, and teach robotics to kids who are better at it than I was.
-          </p>
-          <div class="about-currently">
-            <h4>Right now</h4>
-            <ul>
-              <li>Building with LLMs and biometric data</li>
-              <li>Looking for Summer 2026 internships</li>
-              <li>Trying to break my 5K PR</li>
-            </ul>
-          </div>
-        </div>
-        <div class="about-right">
-          <div class="timeline">
-            <h3>My Journey</h3>
-            <ul class="timeline-events">
-              <!-- Add your timeline events here -->
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2019: First Lines of Code</h4>
-                  <p>Wrote my first programs in Scratch and Python.</p>
-                </div>
-              </li>
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2021: Freshman Year</h4>
-                  <p>Joined FRC Team 4903. Learned C++ and autonomous systems. Honor roll with distinction all four years.</p>
-                </div>
-              </li>
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2022: Sophomore Year</h4>
-                  <p>Won "Best Web App" at MasseyHacks. Founded the investing club.</p>
-                </div>
-              </li>
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2023: Junior Year</h4>
-                  <p>Built myFarm with NASA satellite data. Won NASA Space Apps Challenge. Distinction in multiple math contests.</p>
-                </div>
-              </li>
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2024: Senior Year</h4>
-                  <p>Lead programmer for FRC 4903. Mentored new members and shipped the scouting app.</p>
-                </div>
-              </li>
-              <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2025: Waterloo Engineering</h4>
-                  <p>Started Management Engineering at University of Waterloo. Built HouseLoo and OptionHarvest.</p>
-                </div>
-              </li>
-               <li class="timeline-event">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <h4>2026: Building and Competing</h4>
-                  <p>Won CxC AI Hackathon with Cortex. Built Lucid at HackCanada. Shipping more things, entering more hackathons.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
+      <!-- Intro -->
+      <div class="tile tile--intro" data-tilt>
+        <span class="tile__label">Divyam Banga</span>
+        <h1 class="intro__name"><span class="accent">Div</span>yam Banga</h1>
+        <p class="intro__tagline">I build things that work and break things that don't. Management Engineering @ Waterloo.</p>
+        <p class="intro__typing">
+          <span class="lead">I'm a</span>
+          <span aria-hidden="true"><span id="typed"></span><span class="cursor">|</span></span>
+        </p>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/divyambanga" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+          <a href="mailto:divyambanga@gmail.com" aria-label="Email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
         </div>
       </div>
-    </section>
 
-    <section id="contact" class="section contact-section">
-      <div class="contact-wrapper">
-        <h2>Say hi</h2>
-        <p>Want to build something? I read every email.</p>
-        <a href="mailto:divyambanga@gmail.com" class="email-link">divyambanga@gmail.com</a>
-      </div>
+      <!-- Projects -->
+      <a href="#work" class="tile tile--projects tile--link" data-tilt>
+        <span class="tile__label">Selected work</span>
+        <div class="projects-tile__big">9<span>+</span></div>
+        <h3>Projects &amp; builds</h3>
+        <p>Hackathon winners, games, and full-stack apps.</p>
+        <span class="chips"><span>Browse all &rarr;</span></span>
+      </a>
+
     </section>
   </main>
+
+  <footer class="foot">
+    <span>&copy; 2026 Divyam Banga</span>
+    <span>Built with vanilla HTML, CSS &amp; JS</span>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
