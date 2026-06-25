@@ -13,16 +13,36 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
   }
 
+  // Keep browser chrome in sync only when the user overrides the system theme;
+  // otherwise the media-based <meta name="theme-color"> tags handle it.
+  function setMetaThemeColor() {
+    const override = root.getAttribute('data-theme');
+    let m = document.getElementById('tc-dynamic');
+    if (!override) { if (m) m.remove(); return; }
+    if (!m) {
+      m = document.createElement('meta');
+      m.id = 'tc-dynamic';
+      m.setAttribute('name', 'theme-color');
+      document.head.appendChild(m);
+    }
+    m.setAttribute('content', override === 'dark' ? '#0a0e1a' : '#eaeff7');
+  }
+
   const saved = localStorage.getItem('theme');
   if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
   syncIcon();
+  setMetaThemeColor();
 
   toggle.addEventListener('click', () => {
     const next = effective() === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
     syncIcon();
+    setMetaThemeColor();
   });
+
+  // Reflect OS theme changes when the user hasn't picked a manual theme.
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncIcon);
 
   /* ===== Local time (About tile) ===== */
   const clock = document.getElementById('localtime');
