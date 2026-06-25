@@ -35,4 +35,45 @@ document.addEventListener('DOMContentLoaded', () => {
     tick();
     setInterval(tick, 30000);
   }
+
+  /* ===== Font-morphing typing ===== */
+  const typed = document.getElementById('typed');
+  if (typed) {
+    const roles = [
+      { text: 'engineer',   font: 'var(--font-display)' },
+      { text: 'builder',    font: 'var(--font-serif)'   },
+      { text: 'hacker',     font: 'var(--font-mono)'    },
+      { text: 'creator',    font: 'var(--font-script)'  },
+      { text: 'competitor', font: 'var(--font-display)' },
+      { text: 'designer',   font: 'var(--font-serif)'   }
+    ];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) {
+      typed.style.fontFamily = roles[1].font;
+      typed.textContent = roles[1].text;
+    } else {
+      let i = 0;
+      const type = (role, idx = 0) => {
+        typed.style.fontFamily = role.font;
+        if (idx <= role.text.length) {
+          typed.textContent = role.text.slice(0, idx);
+          setTimeout(() => type(role, idx + 1), 95);
+        } else {
+          setTimeout(erase, 1600);
+        }
+      };
+      const erase = () => {
+        const t = typed.textContent;
+        if (t.length) {
+          typed.textContent = t.slice(0, -1);
+          setTimeout(erase, 45);
+        } else {
+          i = (i + 1) % roles.length;
+          setTimeout(() => type(roles[i]), 180);
+        }
+      };
+      setTimeout(() => type(roles[i]), 600);
+    }
+  }
 });
