@@ -457,6 +457,26 @@ a.tile:hover, .tile--link:hover {
   .pcard--feat .pcard__img img { height: 180px; min-height: 0; }
 }
 
+/* ===== Mouse-reactive glow ===== */
+:root { --glow: rgba(255, 255, 255, 0.14); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --glow: rgba(8, 145, 178, 0.12); } }
+[data-theme="light"] { --glow: rgba(8, 145, 178, 0.12); }
+[data-theme="dark"]  { --glow: rgba(255, 255, 255, 0.14); }
+
+.tile > *, .pcard > * { position: relative; z-index: 1; }
+.tile::after, .pcard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.tile:hover::after, .pcard:hover::after { opacity: 1; }
+
 /* ===== Focus visibility (a11y) ===== */
 a:focus-visible, button:focus-visible, .tile:focus-visible {
   outline: 2px solid var(--accent);
