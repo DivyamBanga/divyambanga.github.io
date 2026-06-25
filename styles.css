@@ -396,6 +396,67 @@ a.tile:hover, .tile--link:hover {
   font-size: 0.85rem;
 }
 
+/* ===== Projects showcase ===== */
+.work { margin-top: clamp(3rem, 6vw, 5rem); scroll-margin-top: 5rem; }
+.work-head { margin-bottom: 1.6rem; }
+.work-head h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 0.3rem; }
+.work-head p { color: var(--muted); }
+
+.featured { display: flex; flex-direction: column; gap: var(--gap); margin-bottom: var(--gap); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--gap); }
+
+.pcard {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, border-color 0.3s, background 0.3s;
+}
+.pcard:hover { transform: translateY(-5px); border-color: var(--glass-border-strong); background: var(--glass-hover); }
+.pcard__img { overflow: hidden; background: #0d1220; }
+.pcard__img img { width: 100%; height: 160px; object-fit: cover; display: block; transition: transform 0.4s; }
+.pcard:hover .pcard__img img { transform: scale(1.05); }
+.pcard__body { padding: 1.1rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
+.pcard__head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+.pcard__head h3 { font-size: 1.15rem; }
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--accent);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  padding: 0.15rem 0.45rem;
+  white-space: nowrap;
+}
+.pcard p { color: var(--muted); font-size: 0.86rem; flex: 1; }
+.pcard .chips { margin-top: 0.8rem; }
+
+.pcard--feat { flex-direction: row; }
+.pcard--feat .pcard__img { width: 300px; flex-shrink: 0; }
+.pcard--feat .pcard__img img { height: 100%; min-height: 190px; }
+
+.pcard__placeholder {
+  height: 130px;
+  background: linear-gradient(135deg, var(--blob-1), var(--blob-2));
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 700px) {
+  .pcard--feat { flex-direction: column; }
+  .pcard--feat .pcard__img { width: 100%; }
+  .pcard--feat .pcard__img img { height: 180px; min-height: 0; }
+}
+
 /* ===== Focus visibility (a11y) ===== */
 a:focus-visible, button:focus-visible, .tile:focus-visible {
   outline: 2px solid var(--accent);
