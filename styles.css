@@ -194,7 +194,7 @@ a.tile, .tile--link { cursor: pointer; }
 a.tile:hover, .tile--link:hover {
   background: var(--glass-hover);
   border-color: var(--glass-border-strong);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 .tile__label {
@@ -417,7 +417,7 @@ a.tile:hover, .tile--link:hover {
   flex-direction: column;
   transition: transform 0.3s, border-color 0.3s, background 0.3s;
 }
-.pcard:hover { transform: translateY(-5px); border-color: var(--glass-border-strong); background: var(--glass-hover); }
+.pcard:hover { transform: translateY(-3px); border-color: var(--glass-border-strong); background: var(--glass-hover); }
 .pcard__img { overflow: hidden; background: #15161a; }
 .pcard__img img { width: 100%; height: 160px; object-fit: cover; display: block; transition: transform 0.4s; }
 .pcard:hover .pcard__img img { transform: scale(1.05); }
@@ -470,7 +470,7 @@ a.tile:hover, .tile--link:hover {
   inset: 0;
   z-index: 0;
   border-radius: inherit;
-  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 60%);
+  background: radial-gradient(200px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 60%);
   opacity: 0;
   transition: opacity 0.35s;
   pointer-events: none;

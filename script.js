@@ -97,26 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ===== Mouse-reactive glass (glow + subtle tilt) ===== */
+  /* ===== Mouse-reactive glow (neutral sheen, no tilt) ===== */
   if (window.matchMedia('(pointer: fine)').matches) {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('[data-tilt], .pcard').forEach(el => {
       el.addEventListener('pointermove', e => {
         const r = el.getBoundingClientRect();
-        const x = e.clientX - r.left;
-        const y = e.clientY - r.top;
-        el.style.setProperty('--mx', x + 'px');
-        el.style.setProperty('--my', y + 'px');
-        if (!reduceMotion) {
-          const rx = ((y / r.height) - 0.5) * -4;
-          const ry = ((x / r.width) - 0.5) * 4;
-          el.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
-        }
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
       });
       el.addEventListener('pointerleave', () => {
         el.style.removeProperty('--mx');
         el.style.removeProperty('--my');
-        el.style.transform = '';
       });
     });
   }
