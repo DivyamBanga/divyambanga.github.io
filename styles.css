@@ -105,7 +105,7 @@
 
 /* ===== Base ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 
 body {
   background-color: var(--bg);
@@ -298,7 +298,7 @@ a.tile:hover, .tile--link:hover {
   border-radius: 50%;
   background: var(--muted);
 }
-.exp-list li.current::before { background: var(--accent); box-shadow: 0 0 0 4px var(--chip-bg); }
+.exp-list li.current::before { background: var(--tint); box-shadow: 0 0 0 4px var(--tint-soft); }
 .exp-role { grid-column: 1; grid-row: 1; font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; }
 .exp-co { grid-column: 1; grid-row: 2; color: var(--muted); font-size: 0.84rem; }
 .exp-when { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
@@ -354,11 +354,11 @@ a.tile:hover, .tile--link:hover {
 .now { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; margin-bottom: 0.9rem; }
 .now-dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent); flex-shrink: 0;
+  background: var(--tint); flex-shrink: 0;
   animation: pulse 2.2s infinite;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 var(--chip-border); }
+  0%   { box-shadow: 0 0 0 0 var(--tint-soft); }
   70%  { box-shadow: 0 0 0 8px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
@@ -648,8 +648,18 @@ a.tile:hover, .tile--link:hover {
   pointer-events: none;
 }
 
+/* ===== iOS-style press feedback ===== */
+/* Quick scale-in on press, springy release via each element's base transition.
+   Only interactive elements depress — static info tiles stay put. */
+a.tile:active, .pcard:active, .btn:active, .seg__btn:active,
+.socials a:active, .icon-link:active, .more-link:active {
+  transform: scale(0.97);
+  transition-duration: 0.12s;
+}
+
 /* ===== Focus visibility (a11y) ===== */
-a:focus-visible, button:focus-visible, .tile:focus-visible {
+a:focus-visible, button:focus-visible, .tile:focus-visible,
+.cc-slider:focus-visible, .seg__btn:focus-visible {
   outline: 2px solid var(--tint);
   outline-offset: 3px;
 }
