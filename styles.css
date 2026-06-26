@@ -262,8 +262,8 @@ a.tile:hover, .tile--link:hover {
   margin-bottom: 1.3rem;
 }
 .intro__typing .lead { color: var(--muted); font-size: 1.1rem; }
-#typed { color: var(--text); font-weight: 600; }
-.cursor { color: var(--accent); animation: blink 0.9s step-end infinite; }
+#typed { color: var(--text); font-weight: 600; line-height: 1.2; }
+.cursor { color: var(--tint); animation: blink 0.9s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
 .socials { display: flex; gap: 0.6rem; }

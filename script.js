@@ -59,23 +59,26 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ===== Font-morphing typing ===== */
   const typed = document.getElementById('typed');
   if (typed) {
+    // Each font is chosen to MEAN its word, so the morph reads as a deliberate
+    // visual joke rather than a random font parade. Order avoids adjacent repeats.
     const roles = [
-      { text: 'engineer',   font: 'var(--font-display)' },
-      { text: 'builder',    font: 'var(--font-serif)'   },
-      { text: 'hacker',     font: 'var(--font-mono)'    },
-      { text: 'creator',    font: 'var(--font-script)'  },
-      { text: 'competitor', font: 'var(--font-display)' },
-      { text: 'designer',   font: 'var(--font-serif)'   }
+      { text: 'engineer', font: 'var(--font-display)', weight: 600 },  // precise, modern
+      { text: 'designer', font: 'var(--font-serif)',   weight: 600 },  // editorial, refined
+      { text: 'hacker',   font: 'var(--font-mono)',    weight: 700 },  // terminal
+      { text: 'builder',  font: 'var(--font-body)',    weight: 700 },  // no-nonsense maker
+      { text: 'creator',  font: 'var(--font-script)',  weight: 700 }   // handmade, expressive
     ];
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduce) {
-      typed.style.fontFamily = roles[1].font;
-      typed.textContent = roles[1].text;
+      typed.style.fontFamily = roles[0].font;
+      typed.style.fontWeight = roles[0].weight;
+      typed.textContent = roles[0].text;
     } else {
       let i = 0;
       const type = (role, idx = 0) => {
         typed.style.fontFamily = role.font;
+        typed.style.fontWeight = role.weight;
         if (idx <= role.text.length) {
           typed.textContent = role.text.slice(0, idx);
           setTimeout(() => type(role, idx + 1), 95);
