@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="dimScrim" aria-hidden="true"></div>
   <header class="topbar">
     <a href="#" class="brand">Div<span class="dot">.</span></a>
     <nav>
@@ -30,9 +31,6 @@
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
       <a href="assets/DivyamResumeSv.pdf" class="btn" target="_blank" rel="noopener">Résumé</a>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light or dark theme">
-        <i class="fas fa-moon" aria-hidden="true"></i>
-      </button>
     </nav>
   </header>
 
@@ -63,6 +61,26 @@
           <li><i class="fas fa-trophy" aria-hidden="true"></i><span><strong>NASA Space Apps</strong> <span class="sub">Winner</span></span></li>
           <li><i class="fas fa-award" aria-hidden="true"></i><span><strong>HackCanada</strong> <span class="sub">Finalist</span></span></li>
         </ul>
+      </div>
+
+      <!-- Display controls (brightness + theme) -->
+      <div class="tile tile--display">
+        <span class="tile__label">Display</span>
+        <div class="display__row">
+          <div class="cc-slider" id="brightness" role="slider" tabindex="0"
+               aria-label="Page brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100%">
+            <div class="cc-slider__fill"></div>
+            <i class="fas fa-sun cc-slider__icon" aria-hidden="true"></i>
+          </div>
+          <div class="display__theme">
+            <span class="display__theme-label">Appearance</span>
+            <label class="toggle">
+              <input type="checkbox" id="themeToggle" class="toggle__input" aria-label="Toggle dark mode">
+              <span class="toggle__track"><span class="toggle__knob"></span></span>
+            </label>
+            <span class="display__hint">Drag to dim · tap for dark</span>
+          </div>
+        </div>
       </div>
 
       <!-- Projects -->

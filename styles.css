@@ -167,19 +167,7 @@ a { color: inherit; text-decoration: none; }
 }
 .topbar nav a:hover { color: var(--accent); }
 
-.theme-toggle {
-  display: grid;
-  place-items: center;
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  color: var(--text);
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background 0.25s, border-color 0.25s, transform 0.25s;
-}
-.theme-toggle:hover { background: var(--glass-hover); transform: rotate(-15deg); }
+/* Theme toggle relocated into the Display tile (see .toggle below). */
 
 /* ===== Layout ===== */
 .wrap {
@@ -231,15 +219,17 @@ a.tile:hover, .tile--link:hover {
 .tile .arrow { margin-left: auto; }
 
 /* Tile placement — explicit grid lines for a deterministic 6-col bento.
-   Awards sits top-right beside the hero so social proof reads in the first glance. */
+   Awards sits top-right beside the hero so social proof reads in the first
+   glance; the Display controls anchor the right column underneath it. */
 .tile--intro    { grid-column: 1 / span 4; grid-row: 1 / span 2; }
 .tile--awards   { grid-column: 5 / span 2; grid-row: 1; }
-.tile--projects { grid-column: 5 / span 2; grid-row: 2; }
-.tile--exp      { grid-column: 1 / span 2; grid-row: 3 / span 2; }
-.tile--edu      { grid-column: 3 / span 2; grid-row: 3; }
-.tile--about    { grid-column: 5 / span 2; grid-row: 3; }
-.tile--personal { grid-column: 3 / span 2; grid-row: 4; }
-.tile--contact  { grid-column: 5 / span 2; grid-row: 4; }
+.tile--display  { grid-column: 5 / span 2; grid-row: 2 / span 2; }
+.tile--projects { grid-column: 1 / span 2; grid-row: 3; }
+.tile--exp      { grid-column: 3 / span 2; grid-row: 3 / span 2; }
+.tile--about    { grid-column: 1 / span 2; grid-row: 4; }
+.tile--personal { grid-column: 5 / span 2; grid-row: 4; }
+.tile--edu      { grid-column: 1 / span 3; grid-row: 5; }
+.tile--contact  { grid-column: 4 / span 3; grid-row: 5; }
 
 /* ===== Intro tile ===== */
 .tile--intro { justify-content: center; }
@@ -387,6 +377,88 @@ a.tile:hover, .tile--link:hover {
 .hobby-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.1rem; }
 .hobby-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--text); }
 .hobby-list i { color: var(--muted); width: 1.15rem; text-align: center; font-size: 0.95rem; }
+
+/* ===== Display tile: brightness slider + iOS theme toggle ===== */
+.display__row { display: flex; gap: 1.1rem; flex: 1; align-items: stretch; margin-top: 0.3rem; }
+
+/* iOS Control Center brightness — a self-contained dark "screen" control so it
+   stays legible on both light and dark tiles. Thumbless; fills from the bottom. */
+.cc-slider {
+  position: relative;
+  flex: 0 0 56px;
+  min-height: 150px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(18, 19, 24, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.35s var(--ease-ios);
+}
+.cc-slider.is-dragging { transform: scaleX(1.06); cursor: grabbing; }
+.cc-slider__fill {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: var(--level, 100%);
+  background: linear-gradient(to top, #dfe1e6, #ffffff);
+  transition: height 0.12s linear;
+}
+.cc-slider.is-dragging .cc-slider__fill { transition: none; }
+.cc-slider__icon {
+  position: absolute;
+  left: 50%; bottom: 13px;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 1rem;
+  color: #fff;
+  mix-blend-mode: difference;   /* legible over both the white fill and dark track */
+  pointer-events: none;
+}
+
+.display__theme { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.55rem; }
+.display__theme-label { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; }
+.display__hint { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.04em; color: var(--muted); line-height: 1.45; }
+
+/* iOS toggle switch */
+.toggle { display: inline-flex; width: fit-content; cursor: pointer; }
+.toggle__input { position: absolute; opacity: 0; width: 0; height: 0; }
+.toggle__track {
+  display: inline-block;
+  width: 50px; height: 30px;
+  border-radius: 15px;
+  background: var(--chip-bg);
+  border: 1px solid var(--glass-border);
+  position: relative;
+  transition: background 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+.toggle__knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.4s var(--spring);
+}
+.toggle__input:checked + .toggle__track { background: var(--tint); border-color: var(--tint); }
+.toggle__input:checked + .toggle__track .toggle__knob { transform: translateX(20px); }
+.toggle__input:focus-visible + .toggle__track { outline: 2px solid var(--tint); outline-offset: 3px; }
+
+/* Page-dimming scrim driven by the brightness slider */
+#dimScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s linear;
+}
 
 /* ===== Contact tile ===== */
 .contact-email {
