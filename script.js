@@ -1,3 +1,7 @@
+/* Console greeting for the curious devs who pop open DevTools. */
+console.log("%c👋 Hey, curious dev — this was built by hand with vanilla HTML, CSS & JS.", "font:600 13px ui-sans-serif,system-ui");
+console.log("%cPsst… try the Konami code:  ↑ ↑ ↓ ↓ ← → ← → B A", "color:#4c9bff;font:600 12px ui-monospace,monospace");
+
 document.addEventListener('DOMContentLoaded', () => {
   /* ===== Theme toggle (iOS switch in the Display tile) ===== */
   const root = document.documentElement;
@@ -238,4 +242,30 @@ document.addEventListener('DOMContentLoaded', () => {
       io.observe(el);
     });
   }
+
+  /* ===== Konami code easter egg — a glass toast + a subtle tile "pop" ===== */
+  const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let kPos = 0, toastEl = null, toastTimer = null;
+  const showToast = msg => {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      toastEl.setAttribute('role', 'status');
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    requestAnimationFrame(() => toastEl.classList.add('is-shown'));
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-shown'), 2600);
+  };
+  window.addEventListener('keydown', e => {
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    kPos = (k === konami[kPos]) ? kPos + 1 : (k === konami[0] ? 1 : 0);
+    if (kPos === konami.length) {
+      kPos = 0;
+      showToast('✦ Boost unlocked — nice find');
+      document.body.classList.add('boost');
+      setTimeout(() => document.body.classList.remove('boost'), 700);
+    }
+  });
 });
