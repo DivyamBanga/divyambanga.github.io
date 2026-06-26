@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ===== Font-morphing typing ===== */
   const typed = document.getElementById('typed');
+  const lead = document.querySelector('.intro__typing .lead');
+  const article = word => (/^[aeiou]/i.test(word) ? "I'm an" : "I'm a");
   if (typed) {
     // Each font is chosen to MEAN its word, so the morph reads as a deliberate
     // visual joke rather than a random font parade. Order avoids adjacent repeats.
@@ -169,12 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduce) {
+      if (lead) lead.textContent = article(roles[0].text);
       typed.style.fontFamily = roles[0].font;
       typed.style.fontWeight = roles[0].weight;
       typed.textContent = roles[0].text;
     } else {
       let i = 0;
       const type = (role, idx = 0) => {
+        if (idx === 0 && lead) lead.textContent = article(role.text);
         typed.style.fontFamily = role.font;
         typed.style.fontWeight = role.weight;
         if (idx <= role.text.length) {
