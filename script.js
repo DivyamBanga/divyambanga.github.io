@@ -102,6 +102,46 @@ document.addEventListener('DOMContentLoaded', () => {
     render(false);
   }
 
+  /* ===== Project filter (iOS segmented control) ===== */
+  const seg = document.querySelector('.segmented');
+  if (seg) {
+    const pill = seg.querySelector('.seg__pill');
+    const segBtns = Array.from(seg.querySelectorAll('.seg__btn'));
+    const cards = Array.from(document.querySelectorAll('.work .grid .pcard'));
+
+    const movePill = btn => {
+      if (!btn) return;
+      pill.style.width = btn.offsetWidth + 'px';
+      pill.style.transform = `translateX(${btn.offsetLeft}px)`;
+    };
+    const applyFilter = f => {
+      cards.forEach(card => {
+        const cats = (card.dataset.cat || '').split(' ');
+        card.classList.toggle('is-hidden', !(f === 'all' || cats.includes(f)));
+      });
+    };
+
+    segBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        segBtns.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-pressed', 'true');
+        movePill(btn);
+        applyFilter(btn.dataset.filter);
+      });
+    });
+
+    // Position the pill once layout + web fonts are ready, and keep it aligned.
+    const activeBtn = () => seg.querySelector('.seg__btn.is-active') || segBtns[0];
+    requestAnimationFrame(() => movePill(activeBtn()));
+    window.addEventListener('load', () => movePill(activeBtn()));
+    let resizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => movePill(activeBtn()), 120);
+    });
+  }
+
   /* ===== Local time (About tile) ===== */
   const clock = document.getElementById('localtime');
   if (clock) {

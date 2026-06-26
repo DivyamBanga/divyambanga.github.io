@@ -503,7 +503,60 @@ a.tile:hover, .tile--link:hover {
 .work-head p { color: var(--muted); }
 
 .featured { display: flex; flex-direction: column; gap: var(--gap); margin-bottom: var(--gap); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--gap); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--gap); }
+
+/* ===== Segmented filter control (iOS-style) ===== */
+.segmented {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--chip-bg);
+  margin-bottom: 1.5rem;
+}
+.seg__btn {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.42rem 1.1rem;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.25s var(--ease-out);
+}
+.seg__btn:hover { color: var(--accent); }
+.seg__btn.is-active { color: var(--accent); }
+.seg__pill {
+  position: absolute;
+  top: 4px; bottom: 4px;
+  left: 0; width: 0;
+  border-radius: 9px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  transition: transform 0.32s var(--ease-ios), width 0.32s var(--ease-ios);
+  z-index: 0;
+}
+.pcard.is-hidden { display: none; }
+.pcard--win .tag { color: var(--tint); border-color: var(--tint); }
+
+/* "More on GitHub" link */
+.more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--muted);
+  transition: color 0.25s var(--ease-out), gap 0.25s var(--ease-out);
+}
+.more-link:hover { color: var(--accent); gap: 0.75rem; }
 
 .pcard {
   position: relative;
