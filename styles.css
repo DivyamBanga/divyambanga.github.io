@@ -230,14 +230,16 @@ a.tile:hover, .tile--link:hover {
 .tile p { color: var(--muted); font-size: 0.92rem; }
 .tile .arrow { margin-left: auto; }
 
-/* Tile placement */
-.tile--intro    { grid-column: span 4; grid-row: span 2; }
-.tile--projects { grid-column: span 2; grid-row: span 2; }
-.tile--edu      { grid-column: span 3; }
-.tile--awards   { grid-column: span 3; }
-.tile--exp      { grid-column: span 3; grid-row: span 2; }
-.tile--about    { grid-column: span 3; }
-.tile--contact  { grid-column: span 3; }
+/* Tile placement — explicit grid lines for a deterministic 6-col bento.
+   Awards sits top-right beside the hero so social proof reads in the first glance. */
+.tile--intro    { grid-column: 1 / span 4; grid-row: 1 / span 2; }
+.tile--awards   { grid-column: 5 / span 2; grid-row: 1; }
+.tile--projects { grid-column: 5 / span 2; grid-row: 2; }
+.tile--exp      { grid-column: 1 / span 2; grid-row: 3 / span 2; }
+.tile--edu      { grid-column: 3 / span 2; grid-row: 3; }
+.tile--about    { grid-column: 5 / span 2; grid-row: 3; }
+.tile--personal { grid-column: 3 / span 2; grid-row: 4; }
+.tile--contact  { grid-column: 5 / span 2; grid-row: 4; }
 
 /* ===== Intro tile ===== */
 .tile--intro { justify-content: center; }
@@ -380,6 +382,11 @@ a.tile:hover, .tile--link:hover {
   color: var(--muted);
 }
 .about-meta i { color: var(--muted); margin-right: 0.35rem; }
+
+/* ===== Personal / hobbies tile ===== */
+.hobby-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.1rem; }
+.hobby-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--text); }
+.hobby-list i { color: var(--muted); width: 1.15rem; text-align: center; font-size: 0.95rem; }
 
 /* ===== Contact tile ===== */
 .contact-email {
@@ -525,10 +532,10 @@ a:focus-visible, button:focus-visible, .tile:focus-visible {
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .bento { grid-template-columns: repeat(2, 1fr); }
-  .tile--intro    { grid-column: span 2; grid-row: auto; }
-  .tile--projects { grid-column: span 2; grid-row: auto; }
-  .tile--exp      { grid-column: span 2; grid-row: auto; }
-  .tile--edu, .tile--awards, .tile--about, .tile--contact { grid-column: span 1; }
+  /* Reset every tile's explicit placement back to flow, then let the two
+     anchor tiles span full width. */
+  .tile { grid-column: auto / span 1; grid-row: auto; }
+  .tile--intro, .tile--exp { grid-column: auto / span 2; }
 }
 @media (max-width: 600px) {
   .bento { grid-template-columns: 1fr; }
