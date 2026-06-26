@@ -705,6 +705,14 @@ body.boost .tile { animation: boost-pop 0.7s var(--spring); }
 @media (max-width: 600px) {
   .bento { grid-template-columns: 1fr; }
   .tile { grid-column: 1 / -1 !important; grid-row: auto !important; }
+  /* Lighter blur on small screens for paint performance */
+  .tile, .pcard {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+  /* Trim the nav so the Résumé button never clips; content is one scroll away */
+  .topbar nav { gap: 0.85rem; }
+  .topbar nav a:not(.btn):not([href="#work"]) { display: none; }
 }
 
 /* ===== Scroll reveal ===== */
@@ -728,7 +736,8 @@ body.boost .tile { animation: boost-pop 0.7s var(--spring); }
   :root { --glass: rgba(20, 21, 24, 0.94); --glass-hover: rgba(30, 31, 35, 0.97); }
   [data-theme="light"] { --glass: rgba(255, 255, 255, 0.96); --glass-hover: #ffffff; }
   [data-theme="dark"]  { --glass: rgba(20, 21, 24, 0.94); --glass-hover: rgba(30, 31, 35, 0.97); }
-  .topbar, .tile, .pcard { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .topbar, .tile, .pcard, .cc-slider, .toast { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .cc-slider { background: #1c1d22; }
 }
 @media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
   :root:not([data-theme]) { --glass: rgba(255, 255, 255, 0.96); --glass-hover: #ffffff; }
