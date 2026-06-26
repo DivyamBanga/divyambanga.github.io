@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ===== Mouse-reactive glow (neutral sheen, no tilt) ===== */
   if (window.matchMedia('(pointer: fine)').matches) {
-    document.querySelectorAll('[data-tilt], .pcard').forEach(el => {
+    document.querySelectorAll('.tile, .pcard').forEach(el => {
       el.addEventListener('pointermove', e => {
         const r = el.getBoundingClientRect();
         el.style.setProperty('--mx', (e.clientX - r.left) + 'px');

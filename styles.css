@@ -11,6 +11,11 @@
   --maxw: 1180px;
   --gap: 18px;
 
+  /* iOS-style easing (theme-independent) */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
   /* Dark theme (default) — neutral frosted glass */
   --bg: #0b0c0e;
   --blob-1: rgba(255, 255, 255, 0.06);
@@ -19,11 +24,15 @@
   --muted: #9b9ea6;
   --accent: #f3f4f6;
   --accent-strong: #ffffff;
+  --tint: #4c9bff;                          /* soft iOS blue — interactive/live states only */
+  --tint-soft: rgba(76, 155, 255, 0.16);
   --glass: rgba(255, 255, 255, 0.07);
   --glass-hover: rgba(255, 255, 255, 0.11);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-strong: rgba(255, 255, 255, 0.20);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.40);
+  --rim-hi: rgba(255, 255, 255, 0.18);      /* specular rim — light-facing edge */
+  --rim-lo: rgba(255, 255, 255, 0.04);      /* specular rim — shadow edge */
+  --shadow: 0 1px 2px rgba(0,0,0,0.30), 0 10px 30px rgba(0,0,0,0.40), 0 22px 50px rgba(0,0,0,0.26);
   --chip-bg: rgba(255, 255, 255, 0.06);
   --chip-border: rgba(255, 255, 255, 0.14);
 }
@@ -38,11 +47,15 @@
     --muted: #6b6e76;
     --accent: #1c1d1f;
     --accent-strong: #000000;
+    --tint: #0a66d6;
+    --tint-soft: rgba(10, 102, 214, 0.12);
     --glass: rgba(255, 255, 255, 0.55);
     --glass-hover: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(255, 255, 255, 0.80);
     --glass-border-strong: rgba(255, 255, 255, 0.95);
-    --shadow: 0 10px 30px rgba(20, 25, 40, 0.10);
+    --rim-hi: rgba(255, 255, 255, 0.95);
+    --rim-lo: rgba(255, 255, 255, 0.45);
+    --shadow: 0 1px 2px rgba(20,25,40,0.06), 0 10px 30px rgba(20,25,40,0.10), 0 22px 50px rgba(20,25,40,0.06);
     --chip-bg: rgba(0, 0, 0, 0.05);
     --chip-border: rgba(0, 0, 0, 0.10);
   }
@@ -57,11 +70,15 @@
   --muted: #6b6e76;
   --accent: #1c1d1f;
   --accent-strong: #000000;
+  --tint: #0a66d6;
+  --tint-soft: rgba(10, 102, 214, 0.12);
   --glass: rgba(255, 255, 255, 0.55);
   --glass-hover: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.80);
   --glass-border-strong: rgba(255, 255, 255, 0.95);
-  --shadow: 0 10px 30px rgba(20, 25, 40, 0.10);
+  --rim-hi: rgba(255, 255, 255, 0.95);
+  --rim-lo: rgba(255, 255, 255, 0.45);
+  --shadow: 0 1px 2px rgba(20,25,40,0.06), 0 10px 30px rgba(20,25,40,0.10), 0 22px 50px rgba(20,25,40,0.06);
   --chip-bg: rgba(0, 0, 0, 0.05);
   --chip-border: rgba(0, 0, 0, 0.10);
 }
@@ -73,11 +90,15 @@
   --muted: #9b9ea6;
   --accent: #f3f4f6;
   --accent-strong: #ffffff;
+  --tint: #4c9bff;
+  --tint-soft: rgba(76, 155, 255, 0.16);
   --glass: rgba(255, 255, 255, 0.07);
   --glass-hover: rgba(255, 255, 255, 0.11);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-strong: rgba(255, 255, 255, 0.20);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.40);
+  --rim-hi: rgba(255, 255, 255, 0.18);
+  --rim-lo: rgba(255, 255, 255, 0.04);
+  --shadow: 0 1px 2px rgba(0,0,0,0.30), 0 10px 30px rgba(0,0,0,0.40), 0 22px 50px rgba(0,0,0,0.26);
   --chip-bg: rgba(255, 255, 255, 0.06);
   --chip-border: rgba(255, 255, 255, 0.14);
 }
@@ -179,16 +200,16 @@ a { color: inherit; text-decoration: none; }
 .tile {
   position: relative;
   background: var(--glass);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--rim-hi);
   padding: 1.6rem 1.7rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  transition: background 0.3s var(--ease-out), border-color 0.3s var(--ease-out), transform 0.4s var(--ease-ios);
 }
 a.tile, .tile--link { cursor: pointer; }
 a.tile:hover, .tile--link:hover {
@@ -406,16 +427,17 @@ a.tile:hover, .tile--link:hover {
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--gap); }
 
 .pcard {
+  position: relative;
   background: var(--glass);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--rim-hi);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s, border-color 0.3s, background 0.3s;
+  transition: transform 0.4s var(--ease-ios), border-color 0.3s var(--ease-out), background 0.3s var(--ease-out);
 }
 .pcard:hover { transform: translateY(-3px); border-color: var(--glass-border-strong); background: var(--glass-hover); }
 .pcard__img { overflow: hidden; background: #15161a; }
@@ -477,9 +499,26 @@ a.tile:hover, .tile--link:hover {
 }
 .tile:hover::after, .pcard:hover::after { opacity: 1; }
 
+/* Specular rim — bright light-facing edge fading to a faint shadow edge.
+   This masked gradient border is the core "Liquid Glass" tell (vs. flat blur). */
+.tile::before, .pcard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--rim-hi), transparent 38%, transparent 62%, var(--rim-lo));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
 /* ===== Focus visibility (a11y) ===== */
 a:focus-visible, button:focus-visible, .tile:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--tint);
   outline-offset: 3px;
 }
 
