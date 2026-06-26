@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       m.setAttribute('name', 'theme-color');
       document.head.appendChild(m);
     }
-    m.setAttribute('content', override === 'dark' ? '#0a0e1a' : '#eaeff7');
+    m.setAttribute('content', override === 'dark' ? '#0b0c0e' : '#f2f3f5');
   }
 
   const saved = localStorage.getItem('theme');
