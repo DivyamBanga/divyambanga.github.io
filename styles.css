@@ -105,7 +105,7 @@
 
 /* ===== Base ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; -webkit-tap-highlight-color: transparent; }
 
 body {
   background-color: var(--bg);
@@ -497,7 +497,7 @@ a.tile:hover, .tile--link:hover {
 }
 
 /* ===== Projects showcase ===== */
-.work { margin-top: clamp(3rem, 6vw, 5rem); scroll-margin-top: 5rem; }
+.work { margin-top: clamp(3rem, 6vw, 5rem); }
 .work-head { margin-bottom: 1.6rem; }
 .work-head h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 0.3rem; }
 .work-head p { color: var(--muted); }
