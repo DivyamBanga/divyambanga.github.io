@@ -742,3 +742,13 @@ body.boost .tile { animation: boost-pop 0.7s var(--spring); }
 @media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
   :root:not([data-theme]) { --glass: rgba(255, 255, 255, 0.96); --glass-hover: #ffffff; }
 }
+
+/* ===== No backdrop-filter support: fall back to opaque panels for legibility ===== */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass: rgba(20, 21, 24, 0.92); --glass-hover: rgba(30, 31, 35, 0.96); }
+  [data-theme="light"] { --glass: rgba(255, 255, 255, 0.94); --glass-hover: #ffffff; }
+  [data-theme="dark"]  { --glass: rgba(20, 21, 24, 0.92); --glass-hover: rgba(30, 31, 35, 0.96); }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) { --glass: rgba(255, 255, 255, 0.94); --glass-hover: #ffffff; }
+  }
+}
