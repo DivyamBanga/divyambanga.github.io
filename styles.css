@@ -769,3 +769,25 @@ body.boost .tile { animation: boost-pop 0.7s var(--spring); }
   .tile__label, .tile p, .pcard p, .exp-co, .exp-when, .about-bio { color: #333 !important; }
   a { color: #000 !important; }
 }
+
+/* ===== Increased contrast: firmer borders and stronger secondary text ===== */
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #c3c6cd;
+    --glass-border: rgba(255, 255, 255, 0.28);
+    --glass-border-strong: rgba(255, 255, 255, 0.42);
+    --chip-border: rgba(255, 255, 255, 0.32);
+  }
+  [data-theme="dark"] {
+    --muted: #c3c6cd;
+    --glass-border: rgba(255, 255, 255, 0.28);
+    --glass-border-strong: rgba(255, 255, 255, 0.42);
+    --chip-border: rgba(255, 255, 255, 0.32);
+  }
+  :root:not([data-theme]), [data-theme="light"] {
+    --muted: #3a3d44;
+    --glass-border: rgba(0, 0, 0, 0.30);
+    --glass-border-strong: rgba(0, 0, 0, 0.45);
+    --chip-border: rgba(0, 0, 0, 0.30);
+  }
+}
