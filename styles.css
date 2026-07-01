@@ -770,6 +770,17 @@ body.boost .tile { animation: boost-pop 0.7s var(--spring); }
   a { color: #000 !important; }
 }
 
+/* ===== Screen-reader-only utility ===== */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ===== Increased contrast: firmer borders and stronger secondary text ===== */
 @media (prefers-contrast: more) {
   :root {

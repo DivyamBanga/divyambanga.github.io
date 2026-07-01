@@ -112,17 +112,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const pill = seg.querySelector('.seg__pill');
     const segBtns = Array.from(seg.querySelectorAll('.seg__btn'));
     const cards = Array.from(document.querySelectorAll('.work .grid .pcard'));
+    const status = document.getElementById('filterStatus');
 
     const movePill = btn => {
       if (!btn) return;
       pill.style.width = btn.offsetWidth + 'px';
       pill.style.transform = `translateX(${btn.offsetLeft}px)`;
     };
-    const applyFilter = f => {
+    const applyFilter = (f, announce) => {
+      let shown = 0;
       cards.forEach(card => {
         const cats = (card.dataset.cat || '').split(' ');
-        card.classList.toggle('is-hidden', !(f === 'all' || cats.includes(f)));
+        const match = f === 'all' || cats.includes(f);
+        card.classList.toggle('is-hidden', !match);
+        if (match) shown++;
       });
+      if (announce && status) {
+        status.textContent = `Showing ${shown} project${shown === 1 ? '' : 's'}.`;
+      }
     };
 
     segBtns.forEach(btn => {
@@ -131,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.add('is-active');
         btn.setAttribute('aria-pressed', 'true');
         movePill(btn);
-        applyFilter(btn.dataset.filter);
+        applyFilter(btn.dataset.filter, true);
       });
     });
 
