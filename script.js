@@ -220,11 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const r = el.getBoundingClientRect();
         el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
         el.style.setProperty('--my', (e.clientY - r.top) + 'px');
-      });
+      }, { passive: true });
       el.addEventListener('pointerleave', () => {
         el.style.removeProperty('--mx');
         el.style.removeProperty('--my');
-      });
+      }, { passive: true });
     });
   }
 
