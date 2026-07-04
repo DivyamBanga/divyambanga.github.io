@@ -212,4 +212,28 @@ document.addEventListener('DOMContentLoaded', () => {
       closePalette();
     }
   });
+
+  /* ===== GitHub contribution mini-graph ===== */
+  const ghGraph = document.getElementById('ghGraph');
+  const ghCount = document.getElementById('ghCount');
+
+  fetch('https://github-contributions-api.jogruber.de/v4/DivyamBanga?y=last')
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((data) => {
+      const days = data.contributions || [];
+      if (!days.length) return;
+      // Show only as many full weeks as fit the tile.
+      const weeksToShow = 16;
+      const recent = days.slice(-weeksToShow * 7);
+      const max = Math.max(1, ...recent.map((d) => d.count));
+      ghGraph.replaceChildren(...recent.map((d) => {
+        const cell = document.createElement('i');
+        cell.style.setProperty('--v', (d.count / max).toFixed(2));
+        return cell;
+      }));
+      const total = (data.total && data.total.lastYear) ||
+        days.reduce((n, d) => n + d.count, 0);
+      ghCount.textContent = total.toLocaleString('en-CA') + ' contributions in the last year';
+    })
+    .catch(() => { /* tile already links to the profile; leave the fallback text */ });
 });
