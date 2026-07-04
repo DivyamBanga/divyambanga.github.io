@@ -1,12 +1,11 @@
 /* Console greeting for the curious devs who pop open DevTools. */
-console.log("%c👋 Hey, curious dev — this was built by hand with vanilla HTML, CSS & JS.", "font:600 13px ui-sans-serif,system-ui");
-console.log("%cPsst… try the Konami code:  ↑ ↑ ↓ ↓ ← → ← → B A", "color:#4c9bff;font:600 12px ui-monospace,monospace");
+console.log("%c👋 Hey, curious dev — this is vanilla HTML, CSS & JS. Press ⌘K.", "font:600 13px ui-sans-serif,system-ui");
 
 document.addEventListener('DOMContentLoaded', () => {
-  /* ===== Theme toggle (iOS switch in the Display tile) ===== */
   const root = document.documentElement;
-  const themeToggle = document.getElementById('themeToggle');
 
+  /* ===== Theme (dock button, persisted, follows system by default) ===== */
+  const themeBtn = document.getElementById('themeBtn');
   const systemDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
   const effectiveTheme = () => root.getAttribute('data-theme') || (systemDark() ? 'dark' : 'light');
 
@@ -18,261 +17,83 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!override) { if (m) m.remove(); return; }
     if (!m) {
       m = document.createElement('meta');
+      m.name = 'theme-color';
       m.id = 'tc-dynamic';
-      m.setAttribute('name', 'theme-color');
       document.head.appendChild(m);
     }
-    m.setAttribute('content', override === 'dark' ? '#0b0c0e' : '#f2f3f5');
+    m.content = override === 'dark' ? '#0a0c10' : '#e9edf3';
   }
-
-  const syncToggle = () => { if (themeToggle) themeToggle.checked = effectiveTheme() === 'dark'; };
-
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light' || savedTheme === 'dark') root.setAttribute('data-theme', savedTheme);
-  syncToggle();
   setMetaThemeColor();
 
-  if (themeToggle) {
-    themeToggle.addEventListener('change', () => {
-      const next = themeToggle.checked ? 'dark' : 'light';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      setMetaThemeColor();
-    });
+  function toggleTheme() {
+    const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    setMetaThemeColor();
   }
-  // Reflect OS theme changes when the user hasn't picked a manual theme.
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncToggle);
+  themeBtn.addEventListener('click', toggleTheme);
 
-  /* ===== Brightness control (Display tile) — dims the page via a scrim ===== */
-  const slider = document.getElementById('brightness');
-  const scrim = document.getElementById('dimScrim');
-  if (slider && scrim) {
-    const fill = slider.querySelector('.cc-slider__fill');
-    const KEY = 'pageBrightness';
-    const MIN = 25;   // brightness floor so the page never dims to an unusable black
-    const clamp = v => Math.max(0, Math.min(100, v));
-
-    const stored = Number(localStorage.getItem(KEY));
-    let level = (localStorage.getItem(KEY) !== null && Number.isFinite(stored)) ? clamp(stored) : 100;
-
-    function render(persist) {
-      if (fill) fill.style.height = level + '%';
-      // Map the 0–100 slider to a brightness range of MIN–100% so direction is
-      // intuitive (more fill = brighter) while a floor keeps the page usable.
-      const brightness = MIN + (level / 100) * (100 - MIN);
-      scrim.style.opacity = ((100 - brightness) / 100).toFixed(3);
-      slider.setAttribute('aria-valuenow', String(Math.round(level)));
-      slider.setAttribute('aria-valuetext', Math.round(level) + '%');
-      if (persist) localStorage.setItem(KEY, String(Math.round(level)));
-    }
-
-    const setFromPointer = clientY => {
-      const r = slider.getBoundingClientRect();
-      level = clamp(((r.bottom - clientY) / r.height) * 100);   // fill rises from the bottom
-      render(false);
-    };
-    const onMove = e => setFromPointer(e.clientY);
-    const onUp = e => {
-      slider.classList.remove('is-dragging');
-      try { slider.releasePointerCapture(e.pointerId); } catch (_) {}
-      document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup', onUp);
-      render(true);   // persist only on release
-    };
-    slider.addEventListener('pointerdown', e => {
-      e.preventDefault();                       // no text selection / image drag
-      slider.focus({ preventScroll: true });    // keep keyboard control after a drag
-      slider.classList.add('is-dragging');
-      try { slider.setPointerCapture(e.pointerId); } catch (_) {}
-      setFromPointer(e.clientY);
-      document.addEventListener('pointermove', onMove);
-      document.addEventListener('pointerup', onUp);
-    });
-
-    slider.addEventListener('keydown', e => {
-      const step = e.shiftKey ? 10 : 5;
-      let handled = true;
-      switch (e.key) {
-        case 'ArrowUp': case 'ArrowRight': level = clamp(level + step); break;
-        case 'ArrowDown': case 'ArrowLeft': level = clamp(level - step); break;
-        case 'Home': level = 100; break;
-        case 'End':  level = 0;   break;
-        default: handled = false;
-      }
-      if (handled) { e.preventDefault(); render(true); }
-    });
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) scrim.style.transition = 'none';
-    render(false);
-  }
-
-  /* ===== Project filter (iOS segmented control) ===== */
-  const seg = document.querySelector('.segmented');
-  if (seg) {
-    const pill = seg.querySelector('.seg__pill');
-    const segBtns = Array.from(seg.querySelectorAll('.seg__btn'));
-    const cards = Array.from(document.querySelectorAll('.work .grid .pcard'));
-    const status = document.getElementById('filterStatus');
-
-    const movePill = btn => {
-      if (!btn) return;
-      pill.style.width = btn.offsetWidth + 'px';
-      pill.style.transform = `translateX(${btn.offsetLeft}px)`;
-    };
-    const applyFilter = (f, announce) => {
-      let shown = 0;
-      cards.forEach(card => {
-        const cats = (card.dataset.cat || '').split(' ');
-        const match = f === 'all' || cats.includes(f);
-        card.classList.toggle('is-hidden', !match);
-        if (match) shown++;
-      });
-      if (announce && status) {
-        status.textContent = `Showing ${shown} project${shown === 1 ? '' : 's'}.`;
-      }
-    };
-
-    segBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        segBtns.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-pressed', 'true');
-        movePill(btn);
-        applyFilter(btn.dataset.filter, true);
-      });
-    });
-
-    // Position the pill once layout + web fonts are ready, and keep it aligned.
-    const activeBtn = () => seg.querySelector('.seg__btn.is-active') || segBtns[0];
-    requestAnimationFrame(() => movePill(activeBtn()));
-    window.addEventListener('load', () => movePill(activeBtn()));
-    let resizeT;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeT);
-      resizeT = setTimeout(() => movePill(activeBtn()), 120);
-    });
-  }
-
-  /* ===== Local time (About tile) ===== */
+  /* ===== Local time (in the island detail) ===== */
   const clock = document.getElementById('localtime');
-  if (clock) {
-    const tick = () => {
-      clock.textContent = new Date().toLocaleTimeString('en-CA', {
-        timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit'
-      }) + ' ET';
-    };
-    tick();
-    setInterval(tick, 30000);
+  function tick() {
+    clock.textContent = new Intl.DateTimeFormat('en-CA', {
+      hour: 'numeric', minute: '2-digit', timeZone: 'America/Toronto'
+    }).format(new Date());
   }
+  tick();
+  setInterval(tick, 30000);
 
-  /* ===== Font-morphing typing ===== */
-  const typed = document.getElementById('typed');
-  const lead = document.querySelector('.intro__typing .lead');
-  const article = word => (/^[aeiou]/i.test(word) ? "I'm an" : "I'm a");
-  if (typed) {
-    // Each font is chosen to MEAN its word, so the morph reads as a deliberate
-    // visual joke rather than a random font parade. Order avoids adjacent repeats.
-    const roles = [
-      { text: 'engineer', font: 'var(--font-display)', weight: 600 },  // precise, modern
-      { text: 'designer', font: 'var(--font-serif)',   weight: 600 },  // editorial, refined
-      { text: 'hacker',   font: 'var(--font-mono)',    weight: 700 },  // terminal
-      { text: 'builder',  font: 'var(--font-body)',    weight: 700 },  // no-nonsense maker
-      { text: 'creator',  font: 'var(--font-script)',  weight: 700 }   // handmade, expressive
-    ];
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (reduce) {
-      if (lead) lead.textContent = article(roles[0].text);
-      typed.style.fontFamily = roles[0].font;
-      typed.style.fontWeight = roles[0].weight;
-      typed.textContent = roles[0].text;
-    } else {
-      let i = 0;
-      const type = (role, idx = 0) => {
-        if (idx === 0 && lead) lead.textContent = article(role.text);
-        typed.style.fontFamily = role.font;
-        typed.style.fontWeight = role.weight;
-        if (idx <= role.text.length) {
-          typed.textContent = role.text.slice(0, idx);
-          setTimeout(() => type(role, idx + 1), 95);
-        } else {
-          setTimeout(erase, 1600);
-        }
-      };
-      const erase = () => {
-        const t = typed.textContent;
-        if (t.length) {
-          typed.textContent = t.slice(0, -1);
-          setTimeout(erase, 45);
-        } else {
-          i = (i + 1) % roles.length;
-          setTimeout(() => type(roles[i]), 180);
-        }
-      };
-      setTimeout(() => type(roles[i]), 600);
+  /* ===== Dynamic Island expand/collapse ===== */
+  const island = document.getElementById('island');
+  island.addEventListener('click', () => {
+    const open = island.classList.toggle('is-open');
+    island.setAttribute('aria-expanded', String(open));
+  });
+  document.addEventListener('click', (e) => {
+    if (island.classList.contains('is-open') && !island.contains(e.target)) {
+      island.classList.remove('is-open');
+      island.setAttribute('aria-expanded', 'false');
     }
+  });
+
+  /* ===== Project case-study sheets ===== */
+  const sheet = document.getElementById('sheet');
+  const sheetBody = document.getElementById('sheetBody');
+  const scrim = document.getElementById('scrim');
+  let lastFocus = null;
+
+  function openSheet(id) {
+    const tpl = document.getElementById('sheet-' + id);
+    if (!tpl) return;
+    lastFocus = document.activeElement;
+    sheetBody.replaceChildren(tpl.content.cloneNode(true));
+    sheet.hidden = false;
+    scrim.hidden = false;
+    document.body.classList.add('is-modal');
+    // Double rAF so the browser paints the hidden->shown state before transitioning.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      sheet.classList.add('is-open');
+      scrim.classList.add('is-visible');
+    }));
+    document.getElementById('sheetClose').focus();
   }
 
-  /* ===== Mouse-reactive glow (neutral sheen, no tilt) ===== */
-  if (window.matchMedia('(pointer: fine)').matches) {
-    document.querySelectorAll('.tile, .pcard').forEach(el => {
-      el.addEventListener('pointermove', e => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
-      }, { passive: true });
-      el.addEventListener('pointerleave', () => {
-        el.style.removeProperty('--mx');
-        el.style.removeProperty('--my');
-      }, { passive: true });
-    });
+  function closeSheet() {
+    sheet.classList.remove('is-open');
+    scrim.classList.remove('is-visible');
+    document.body.classList.remove('is-modal');
+    setTimeout(() => { sheet.hidden = true; scrim.hidden = true; }, 500);
+    if (lastFocus) lastFocus.focus();
   }
 
-  /* ===== Scroll reveal ===== */
-  const revealEls = document.querySelectorAll('.tile, .pcard');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    revealEls.forEach(el => el.classList.add('is-visible'));
-  } else {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const el = entry.target;
-        el.classList.add('is-visible');
-        io.unobserve(el);
-        // Drop the reveal transition afterwards so it doesn't slow hover effects
-        setTimeout(() => { el.classList.remove('reveal'); el.style.transitionDelay = ''; }, 1200);
-      });
-    }, { threshold: 0.12 });
-    revealEls.forEach((el, i) => {
-      el.classList.add('reveal');
-      el.style.transitionDelay = `${Math.min(i * 0.05, 0.4)}s`;
-      io.observe(el);
-    });
-  }
-
-  /* ===== Konami code easter egg — a glass toast + a subtle tile "pop" ===== */
-  const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-  let kPos = 0, toastEl = null, toastTimer = null;
-  const showToast = msg => {
-    if (!toastEl) {
-      toastEl = document.createElement('div');
-      toastEl.className = 'toast';
-      toastEl.setAttribute('role', 'status');
-      document.body.appendChild(toastEl);
-    }
-    toastEl.textContent = msg;
-    requestAnimationFrame(() => toastEl.classList.add('is-shown'));
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove('is-shown'), 2600);
-  };
-  window.addEventListener('keydown', e => {
-    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    kPos = (k === konami[kPos]) ? kPos + 1 : (k === konami[0] ? 1 : 0);
-    if (kPos === konami.length) {
-      kPos = 0;
-      showToast('✦ Boost unlocked — nice find');
-      document.body.classList.add('boost');
-      setTimeout(() => document.body.classList.remove('boost'), 700);
-    }
+  document.querySelectorAll('[data-sheet]').forEach((btn) => {
+    btn.addEventListener('click', () => openSheet(btn.dataset.sheet));
+  });
+  document.getElementById('sheetClose').addEventListener('click', closeSheet);
+  scrim.addEventListener('click', () => {
+    if (!sheet.hidden) closeSheet();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !sheet.hidden) closeSheet();
   });
 });

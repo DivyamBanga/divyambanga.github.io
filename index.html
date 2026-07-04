@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="color-scheme" content="light dark">
   <meta name="format-detection" content="telephone=no">
-  <meta name="theme-color" content="#f2f3f5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0c10" media="(prefers-color-scheme: dark)">
   <title>Div Banga</title>
-  <meta name="description" content="Divyam Banga. Engineering student at Waterloo. Projects, hackathons, and things I've built.">
+  <meta name="description" content="Divyam Banga — software engineer who builds AI products end-to-end. 2× hackathon winner, Management Engineering @ Waterloo, SWE intern @ PiinPoint (YC).">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta property="og:title" content="Div Banga">
-  <meta property="og:description" content="Engineering student at Waterloo. Projects, hackathons, and things I've built.">
+  <meta property="og:description" content="Software engineer who builds AI products end-to-end. 2× hackathon winner, Management Engineering @ Waterloo.">
   <meta property="og:image" content="https://divyambanga.github.io/assets/Thumbnail.webp">
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="1024">
@@ -20,7 +20,7 @@
   <meta property="og:url" content="https://divyambanga.github.io/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Div Banga">
-  <meta name="twitter:description" content="Engineering student at Waterloo. Projects, hackathons, and things I've built.">
+  <meta name="twitter:description" content="Software engineer who builds AI products end-to-end. 2× hackathon winner, Management Engineering @ Waterloo.">
   <meta name="twitter:image" content="https://divyambanga.github.io/assets/Thumbnail.webp">
   <meta name="twitter:image:alt" content="Div Banga — portfolio">
   <link rel="canonical" href="https://divyambanga.github.io/">
@@ -29,16 +29,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <!-- DNS-prefetch fallbacks for browsers without preconnect support -->
-  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-  <!-- Font Awesome for social icons -->
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
   {
@@ -46,8 +36,9 @@
     "@type": "Person",
     "name": "Divyam Banga",
     "url": "https://divyambanga.github.io/",
-    "description": "Engineering student at Waterloo. Projects, hackathons, and things I've built.",
-    "jobTitle": "Engineering Student",
+    "email": "mailto:dbanga@uwaterloo.ca",
+    "description": "Software engineer who builds AI products end-to-end. 2× hackathon winner, Management Engineering @ Waterloo.",
+    "jobTitle": "Software Engineering Intern",
     "alumniOf": "University of Waterloo",
     "sameAs": [
       "https://www.linkedin.com/in/divyambanga",
@@ -66,224 +57,209 @@
   </script>
 </head>
 <body>
-  <div id="dimScrim" aria-hidden="true"></div>
-  <header class="topbar">
-    <a href="#" class="brand" aria-label="Divyam Banga — back to top">Div<span class="dot">.</span></a>
-    <nav>
-      <a href="#work">Work</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="assets/DivyamResumeSv.pdf" class="btn" target="_blank" rel="noopener">Résumé</a>
-    </nav>
-  </header>
+  <div class="aurora" aria-hidden="true">
+    <i class="aurora__blob aurora__blob--1"></i>
+    <i class="aurora__blob aurora__blob--2"></i>
+    <i class="aurora__blob aurora__blob--3"></i>
+    <i class="aurora__blob aurora__blob--4"></i>
+  </div>
 
-  <main class="wrap">
-    <section class="bento" aria-label="Overview">
+  <!-- Dynamic Island -->
+  <button class="island" id="island" type="button" aria-expanded="false" aria-label="Now — current status">
+    <span class="island__row">
+      <span class="island__dot" aria-hidden="true"></span>
+      <span class="island__label">Now&nbsp;·&nbsp;SWE intern @ PiinPoint</span>
+    </span>
+    <span class="island__detail" aria-hidden="true">
+      <span class="island__item"><strong>PiinPoint</strong> (YC) — software developer intern, May 2026 →</span>
+      <span class="island__item">Building with LLMs &amp; biometrics on the side</span>
+      <span class="island__item">Chasing a 5K PR · <span id="localtime">--:--</span> in Waterloo</span>
+    </span>
+  </button>
 
-      <!-- Intro -->
-      <div class="tile tile--intro">
-        <span class="tile__label">Based in Waterloo, ON</span>
-        <h1 class="intro__name"><span class="accent">Div</span>yam Banga</h1>
-        <p class="intro__tagline">I build things that work and break things that don't. Management Engineering @ Waterloo.</p>
-        <p class="intro__typing">
-          <span class="lead">I'm a</span>
-          <span aria-hidden="true"><span id="typed"></span><span class="cursor">|</span></span>
-        </p>
-        <div class="socials">
-          <a href="https://www.linkedin.com/in/divyambanga" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
-          <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-          <a href="mailto:divyambanga@gmail.com" aria-label="Email"><i class="fas fa-envelope" aria-hidden="true"></i></a>
-        </div>
-      </div>
+  <main class="bento" aria-label="Overview">
 
-      <!-- Awards -->
-      <div class="tile tile--awards">
-        <span class="tile__label">Awards &amp; wins</span>
-        <ul class="award-list" role="list">
-          <li><i class="fas fa-trophy" aria-hidden="true"></i><span><strong>CxC AI Hackathon</strong> <span class="sub">Winner &middot; 1st / 95+ teams</span></span></li>
-          <li><i class="fas fa-trophy" aria-hidden="true"></i><span><strong>NASA Space Apps</strong> <span class="sub">Winner</span></span></li>
-          <li><i class="fas fa-award" aria-hidden="true"></i><span><strong>HackCanada</strong> <span class="sub">Finalist</span></span></li>
-        </ul>
-      </div>
-
-      <!-- Display controls (brightness + theme) -->
-      <div class="tile tile--display">
-        <span class="tile__label">Display</span>
-        <div class="display__row">
-          <div class="cc-slider" id="brightness" role="slider" tabindex="0"
-               aria-label="Page brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100%">
-            <div class="cc-slider__fill"></div>
-            <i class="fas fa-sun cc-slider__icon" aria-hidden="true"></i>
-          </div>
-          <div class="display__theme">
-            <span class="display__theme-label">Appearance</span>
-            <label class="toggle">
-              <input type="checkbox" id="themeToggle" class="toggle__input" aria-label="Toggle dark mode">
-              <span class="toggle__track"><span class="toggle__knob"></span></span>
-            </label>
-            <span class="display__hint">Drag to dim · tap for dark</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Projects -->
-      <a href="#work" class="tile tile--projects tile--link">
-        <span class="tile__label">Selected work</span>
-        <div class="projects-tile__big">9<span>+</span></div>
-        <h3>Projects &amp; builds</h3>
-        <p>Hackathon winners, games, and full-stack apps.</p>
-        <span class="chips"><span>Browse all &rarr;</span></span>
-      </a>
-
-      <!-- Experience -->
-      <div class="tile tile--exp">
-        <span class="tile__label">Experience</span>
-        <ul class="exp-list" role="list">
-          <li class="current">
-            <span class="exp-role">Software Developer Intern</span>
-            <span class="exp-co">PiinPoint <span class="exp-yc">YC</span></span>
-            <span class="exp-when">May 2026 &mdash; Now</span>
-          </li>
-          <li>
-            <span class="exp-role">Software Developer Intern</span>
-            <span class="exp-co">Eurolink Logistics</span>
-            <span class="exp-when">2025</span>
-          </li>
-          <li>
-            <span class="exp-role">Technical Operations Lead</span>
-            <span class="exp-co">Stangs for a Change</span>
-            <span class="exp-when">2024&ndash;25</span>
-          </li>
-          <li>
-            <span class="exp-role">Full Stack Developer</span>
-            <span class="exp-co">Waterloo Data Science Club</span>
-            <span class="exp-when">2025&ndash;Now</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Education -->
-      <div class="tile tile--edu">
-        <span class="tile__label">Education</span>
-        <h3>University of Waterloo</h3>
-        <p>BASc, Management Engineering &middot; Computing Specialization</p>
-        <span class="chips">
-          <span>Data Structures</span><span>Software Eng</span><span>Databases</span><span>AI</span>
-        </span>
-      </div>
-
-      <!-- About -->
-      <div class="tile tile--about" id="about">
-        <span class="tile__label">About</span>
-        <p class="about-bio">I study Management Engineering at Waterloo but spend most of my time building &mdash; games, apps, bots, whatever sounds interesting that week. I run track, play too much soccer, and teach robotics.</p>
-        <div class="now">
-          <span class="now-dot" aria-hidden="true"></span>
-          <span class="now-text">Interning at PiinPoint &middot; building with LLMs &amp; biometrics &middot; chasing a 5K PR</span>
-        </div>
-        <div class="about-meta">
-          <span><i class="fas fa-location-dot" aria-hidden="true"></i>Waterloo, ON</span>
-          <span id="localtime" class="about-clock"></span>
-        </div>
-      </div>
-
-      <!-- Personal -->
-      <div class="tile tile--personal">
-        <span class="tile__label">Off the clock</span>
-        <ul class="hobby-list" role="list">
-          <li><i class="fas fa-person-running" aria-hidden="true"></i><span>Chasing a 5K PR</span></li>
-          <li><i class="fas fa-futbol" aria-hidden="true"></i><span>Too much soccer</span></li>
-          <li><i class="fas fa-robot" aria-hidden="true"></i><span>Teaching kids robotics</span></li>
-        </ul>
-      </div>
-
-      <!-- Contact -->
-      <div class="tile tile--contact" id="contact">
-        <span class="tile__label">Contact</span>
-        <h3>Let's build something</h3>
-        <p>I read every email.</p>
-        <a href="mailto:divyambanga@gmail.com" class="contact-email">divyambanga@gmail.com</a>
-        <div class="contact-actions">
-          <a class="btn" href="assets/DivyamResumeSv.pdf" target="_blank" rel="noopener"><i class="fas fa-file-arrow-down" aria-hidden="true"></i> Résumé</a>
-          <a class="icon-link" href="https://www.linkedin.com/in/divyambanga" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
-          <a class="icon-link" href="https://github.com/DivyamBanga" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-        </div>
-      </div>
-
+    <!-- Hero -->
+    <section class="tile tile--hero" style="--i:0">
+      <span class="tile__label">Waterloo, ON</span>
+      <h1 class="hero__name">Divyam Banga</h1>
+      <p class="hero__pitch">I build AI products end-to-end — from the model to the pixels.</p>
+      <p class="hero__sub">Software engineer · 2× hackathon winner · Management Engineering @ UWaterloo · SWE intern @ PiinPoint <span class="yc" title="Y Combinator company">YC</span></p>
+      <p class="hero__offclock">Off the clock: chasing a 5K PR, too much soccer, teaching kids robotics.</p>
     </section>
 
-    <section id="work" class="work">
-      <div class="work-head">
-        <h2>Selected work</h2>
-        <p>Hackathon winners, full-stack apps, and games I've shipped.</p>
-      </div>
-
-      <div class="segmented" role="group" aria-label="Filter projects">
-        <span class="seg__pill" aria-hidden="true"></span>
-        <button class="seg__btn is-active" type="button" data-filter="all" aria-pressed="true">All</button>
-        <button class="seg__btn" type="button" data-filter="ai" aria-pressed="false">AI</button>
-        <button class="seg__btn" type="button" data-filter="games" aria-pressed="false">Games</button>
-      </div>
-      <p class="sr-only" id="filterStatus" role="status" aria-live="polite"></p>
-
-      <div class="grid">
-        <a class="pcard pcard--win" data-cat="ai" href="https://github.com/Vibhor7-7/Cortex-CxC" target="_blank" rel="noopener">
-          <div class="pcard__img"><img loading="lazy" decoding="async" src="assets/Thumbnail.webp" alt="Cortex, 3D semantic map of AI conversations"></div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>Cortex</h3><span class="tag">CxC &middot; 1st / 95+</span></div>
-            <p>A 3D visual memory layer for AI chats — hybrid keyword + semantic search and a custom MCP server pipe past context into new conversations.</p>
-            <div class="chips"><span>FastAPI</span><span>MCP</span><span>SQLite</span><span>Three.js</span></div>
-          </div>
-        </a>
-        <a class="pcard pcard--win" data-cat="ai" href="https://github.com/Doomsy1/NASA" target="_blank" rel="noopener">
-          <div class="pcard__img"><img loading="lazy" decoding="async" src="assets/s5.png" alt="myFarm, NASA satellite data for farmers"></div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>myFarm</h3><span class="tag">NASA Winner</span></div>
-            <p>Maps ideal planting zones from NASA Earth + soil-moisture data, with a farming chatbot and simulation tools.</p>
-            <div class="chips"><span>Flask</span><span>NASA API</span><span>MySQL</span><span>Bootstrap</span></div>
-          </div>
-        </a>
-        <a class="pcard pcard--win" data-cat="ai" href="https://github.com/DivyamBanga/Lucid" target="_blank" rel="noopener">
-          <div class="pcard__img"><img loading="lazy" decoding="async" src="assets/logo.png" alt="Lucid, adaptive study app using biometrics"></div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>Lucid</h3><span class="tag">HackCanada</span></div>
-            <p>Reads heart rate, blink, and breathing from your phone camera to tell when you've stopped learning, then adapts the study session live.</p>
-            <div class="chips"><span>React</span><span>Node.js</span><span>Android</span><span>Ollama</span></div>
-          </div>
-        </a>
-        <a class="pcard pcard--noimg" data-cat="ai" href="https://github.com/DivyamBanga" target="_blank" rel="noopener">
-          <div class="pcard__placeholder">AskMyData</div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>AskMyData</h3></div>
-            <p>Upload a dataset and query it in plain English — a RAG pipeline answers and auto-generates charts.</p>
-            <div class="chips"><span>Flask</span><span>ChromaDB</span><span>Ollama</span></div>
-          </div>
-        </a>
-        <a class="pcard" data-cat="games" href="https://github.com/DivyamBanga/DarkStar" target="_blank" rel="noopener">
-          <div class="pcard__img"><img loading="lazy" decoding="async" src="assets/s3.png" alt="DarkStar multiplayer browser game"></div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>DarkStar</h3></div>
-            <p>Real-time multiplayer browser game — absorb particles to grow and climb a live leaderboard, with in-game chat over WebSockets.</p>
-            <div class="chips"><span>Node.js</span><span>Socket.IO</span><span>Canvas</span></div>
-          </div>
-        </a>
-        <a class="pcard" data-cat="games" href="https://github.com/DivyamBanga/Chess-Engine" target="_blank" rel="noopener">
-          <div class="pcard__img"><img loading="lazy" decoding="async" src="assets/s1_.png" alt="Chess engine with AI opponent"></div>
-          <div class="pcard__body">
-            <div class="pcard__head"><h3>Chess Engine</h3></div>
-            <p>Plays chess with minimax + alpha-beta pruning, picking a move within a 5-second budget.</p>
-            <div class="chips"><span>Java</span><span>Minimax</span></div>
-          </div>
-        </a>
-      </div>
-
-      <a class="more-link" href="https://github.com/DivyamBanga" target="_blank" rel="noopener">+ more on GitHub <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+    <!-- Awards -->
+    <section class="tile tile--awards" style="--i:1">
+      <span class="tile__label">Awards</span>
+      <ul class="awards" role="list">
+        <li><span class="awards__medal" aria-hidden="true">🏆</span><span><strong>CxC AI Hackathon</strong><em>Winner · 1st / 95+ teams</em></span></li>
+        <li><span class="awards__medal" aria-hidden="true">🏆</span><span><strong>NASA Space Apps</strong><em>Winner</em></span></li>
+        <li><span class="awards__medal" aria-hidden="true">🎖️</span><span><strong>HackCanada</strong><em>Finalist</em></span></li>
+      </ul>
     </section>
+
+    <!-- Experience -->
+    <section class="tile tile--exp" style="--i:2">
+      <span class="tile__label">Experience</span>
+      <ul class="exp" role="list">
+        <li class="exp__item is-current">
+          <span class="exp__role">SWE Intern</span>
+          <span class="exp__org">PiinPoint <span class="yc">YC</span></span>
+          <span class="exp__when">May 2026 — now</span>
+        </li>
+        <li class="exp__item">
+          <span class="exp__role">SWE Intern</span>
+          <span class="exp__org">Eurolink Logistics</span>
+          <span class="exp__when">2025</span>
+        </li>
+        <li class="exp__item">
+          <span class="exp__role">Full-stack Dev</span>
+          <span class="exp__org">Waterloo Data Science Club</span>
+          <span class="exp__when">2025 — now</span>
+        </li>
+        <li class="exp__item">
+          <span class="exp__role">Tech Ops Lead</span>
+          <span class="exp__org">Stangs for a Change</span>
+          <span class="exp__when">2024 — 25</span>
+        </li>
+      </ul>
+      <p class="exp__edu">BASc Management Engineering, Computing Specialization · University of Waterloo</p>
+    </section>
+
+    <!-- GitHub -->
+    <a class="tile tile--github" style="--i:3" href="https://github.com/DivyamBanga" target="_blank" rel="noopener">
+      <span class="tile__label">GitHub</span>
+      <div class="gh" id="ghGraph" aria-hidden="true"></div>
+      <p class="gh__count" id="ghCount">github.com/DivyamBanga</p>
+    </a>
+
+    <!-- Featured projects -->
+    <button class="tile tile--project" style="--i:4" type="button" data-sheet="cortex">
+      <span class="tile__badge tile__badge--win">1st / 95+ · CxC</span>
+      <h2 class="project__name">Cortex</h2>
+      <p class="project__line">A 3D memory layer for AI chats — hybrid search + a custom MCP server pipe past context into every new conversation.</p>
+      <span class="project__open" aria-hidden="true">Case study ↗</span>
+    </button>
+
+    <button class="tile tile--project" style="--i:5" type="button" data-sheet="lucid">
+      <span class="tile__badge">HackCanada finalist</span>
+      <h2 class="project__name">Lucid</h2>
+      <p class="project__line">Reads heart rate, blinks &amp; breathing from your phone camera — and adapts your study session live.</p>
+      <span class="project__open" aria-hidden="true">Case study ↗</span>
+    </button>
+
+    <button class="tile tile--project" style="--i:6" type="button" data-sheet="myfarm">
+      <span class="tile__badge tile__badge--win">NASA winner</span>
+      <h2 class="project__name">myFarm</h2>
+      <p class="project__line">Turns NASA Earth data + soil moisture into ideal-planting-zone maps, with a farming chatbot.</p>
+      <span class="project__open" aria-hidden="true">Case study ↗</span>
+    </button>
+
+    <!-- More builds -->
+    <section class="tile tile--more" style="--i:7">
+      <span class="tile__label">More builds</span>
+      <ul class="more" role="list">
+        <li><a href="https://github.com/DivyamBanga" target="_blank" rel="noopener"><strong>AskMyData</strong><em>ask any dataset questions in English</em></a></li>
+        <li><a href="https://github.com/DivyamBanga/DarkStar" target="_blank" rel="noopener"><strong>DarkStar</strong><em>realtime multiplayer browser game</em></a></li>
+        <li><a href="https://github.com/DivyamBanga/Chess-Engine" target="_blank" rel="noopener"><strong>Chess Engine</strong><em>minimax + alpha–beta pruning</em></a></li>
+        <li><a href="https://github.com/DivyamBanga" target="_blank" rel="noopener"><strong>Scouting App</strong><em>FRC 4903 · Flutter + Firebase</em></a></li>
+      </ul>
+    </section>
+
   </main>
 
-  <footer class="foot">
-    <span>&copy; 2026 Divyam Banga</span>
-    <span>Built with vanilla HTML, CSS &amp; JS</span>
-  </footer>
+  <!-- Dock -->
+  <nav class="dock" id="dock" aria-label="Contact and actions">
+    <a class="dock__item" href="mailto:dbanga@uwaterloo.ca" aria-label="Email dbanga@uwaterloo.ca" data-tip="Email">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm.4 2 7.06 5.3a1 1 0 0 0 1.2 0L19.6 7H4.4ZM20 9.25l-6.24 4.68a3 3 0 0 1-3.52 0L4 9.25V17h16V9.25Z"/></svg>
+    </a>
+    <a class="dock__item" href="https://www.linkedin.com/in/divyambanga" target="_blank" rel="noopener" aria-label="LinkedIn" data-tip="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.94 8.5v12H3.56v-12h3.38ZM7.13 4.94a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM20.5 13.14v7.36h-3.37v-6.75c0-1.61-.58-2.71-2.02-2.71-1.1 0-1.76.74-2.05 1.46-.1.26-.13.62-.13.98v7.02H9.56s.05-11.39 0-12h3.37v1.7c.45-.69 1.25-1.68 3.04-1.68 2.22 0 4.53 1.45 4.53 4.62Z"/></svg>
+    </a>
+    <a class="dock__item" href="https://github.com/DivyamBanga" target="_blank" rel="noopener" aria-label="GitHub" data-tip="GitHub">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+    </a>
+    <a class="dock__item" href="assets/DivyamResumeSv.pdf" target="_blank" rel="noopener" aria-label="Résumé (PDF)" data-tip="Résumé">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm7 1.5V8h4.5L13 3.5ZM8 12h8v1.6H8V12Zm0 3.6h8v1.6H8v-1.6Z"/></svg>
+    </a>
+    <span class="dock__sep" aria-hidden="true"></span>
+    <button class="dock__item" id="paletteBtn" type="button" aria-label="Search (Command K)" data-tip="Search ⌘K">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 1 0 4.72 13.33l4.22 4.23 1.42-1.42-4.23-4.22A7.5 7.5 0 0 0 10.5 3Zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z"/></svg>
+    </button>
+    <button class="dock__item" id="themeBtn" type="button" aria-label="Toggle appearance" data-tip="Appearance">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 14.4A8.6 8.6 0 0 1 9.6 3.3 9 9 0 1 0 20.7 14.4Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-15h.01M12 22h.01M2 12h.01M22 12h.01M4.9 4.9h.01M19.1 19.1h.01M4.9 19.1h.01M19.1 4.9h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="12" cy="12" r="4.2"/></svg>
+    </button>
+  </nav>
+
+  <!-- Sheet + scrim -->
+  <div class="scrim" id="scrim" hidden></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Project case study" hidden>
+    <span class="sheet__grabber" aria-hidden="true"></span>
+    <button class="sheet__close" id="sheetClose" type="button" aria-label="Close">✕</button>
+    <div class="sheet__body" id="sheetBody"></div>
+  </section>
+
+  <!-- Spotlight palette -->
+  <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Search" hidden>
+    <div class="palette__panel">
+      <input class="palette__input" id="paletteInput" type="text" placeholder="Search projects, actions…"
+             autocomplete="off" spellcheck="false" aria-label="Search commands">
+      <ul class="palette__list" id="paletteList" role="listbox"></ul>
+    </div>
+  </div>
+
+  <!-- Case-study templates -->
+  <template id="sheet-cortex">
+    <header class="cs__head">
+      <h2>Cortex</h2>
+      <span class="tile__badge tile__badge--win">CxC AI Hackathon · 1st / 95+ teams · $1,000</span>
+    </header>
+    <img class="cs__img" src="assets/Thumbnail.webp" alt="Cortex — 3D semantic map of AI conversations" loading="lazy" decoding="async">
+    <dl class="cs__blocks">
+      <div><dt>Problem</dt><dd>LLM chats have no memory between conversations — you re-explain the same context every single time.</dd></div>
+      <div><dt>What I built</dt><dd>A 3D visual memory layer: a FastAPI + SQLite backend with hybrid keyword + semantic search, and a custom MCP server that summarizes past conversations and feeds them into new LLM responses. The frontend renders your chat history as an explorable 3D cluster map.</dd></div>
+      <div><dt>Outcome</dt><dd>1st of 95+ teams. Cut repeated prompting by 60%+. Shipped in 36 hours with a team of 3 using Git branching and PRs.</dd></div>
+    </dl>
+    <div class="cs__foot">
+      <span class="chips"><span>FastAPI</span><span>Python</span><span>MCP</span><span>SQLite</span><span>Three.js</span></span>
+      <a class="cs__link" href="https://github.com/Vibhor7-7/Cortex-CxC" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
+  </template>
+
+  <template id="sheet-lucid">
+    <header class="cs__head">
+      <h2>Lucid</h2>
+      <span class="tile__badge">HackCanada · Finalist</span>
+    </header>
+    <img class="cs__img" src="assets/logo.png" alt="Lucid — adaptive study app driven by biometrics" loading="lazy" decoding="async">
+    <dl class="cs__blocks">
+      <div><dt>Problem</dt><dd>Study apps can't tell when you've stopped absorbing anything — they keep going while you zone out.</dd></div>
+      <div><dt>What I built</dt><dd>Lucid reads heart rate, blink rate, and breathing straight from your phone camera — no wearables — scores your focus in real time, and adapts the session live: pacing, format, and breaks shift the moment you drift.</dd></div>
+      <div><dt>Outcome</dt><dd>HackCanada finalist, with the full biometric pipeline running on-device.</dd></div>
+    </dl>
+    <div class="cs__foot">
+      <span class="chips"><span>React</span><span>Node.js</span><span>Android</span><span>Ollama</span></span>
+      <a class="cs__link" href="https://github.com/DivyamBanga/Lucid" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
+  </template>
+
+  <template id="sheet-myfarm">
+    <header class="cs__head">
+      <h2>myFarm</h2>
+      <span class="tile__badge tile__badge--win">NASA Space Apps · Winner</span>
+    </header>
+    <img class="cs__img" src="assets/s5.png" alt="myFarm — NASA satellite data mapped to planting zones" loading="lazy" decoding="async">
+    <dl class="cs__blocks">
+      <div><dt>Problem</dt><dd>Farmers pick planting zones on instinct — the satellite data that could tell them better is unusable raw.</dd></div>
+      <div><dt>What I built</dt><dd>A web app that fuses NASA Earth API data with soil-moisture readings to map ideal planting zones, plus a farming chatbot and season-simulation tools on a Flask + MySQL backend.</dd></div>
+      <div><dt>Outcome</dt><dd>NASA Space Apps winner.</dd></div>
+    </dl>
+    <div class="cs__foot">
+      <span class="chips"><span>Python</span><span>Flask</span><span>NASA API</span><span>MySQL</span></span>
+      <a class="cs__link" href="https://github.com/Doomsy1/NASA" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
+  </template>
 
   <script src="script.js"></script>
 </body>
