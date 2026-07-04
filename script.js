@@ -96,4 +96,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !sheet.hidden) closeSheet();
   });
+
+  /* ===== Dock magnification (pointer devices only) ===== */
+  const dock = document.getElementById('dock');
+  const dockItems = Array.from(dock.querySelectorAll('.dock__item'));
+  const canMagnify =
+    window.matchMedia('(pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (canMagnify) {
+    const MAX_SCALE = 0.45;   // extra scale at cursor center
+    const RANGE = 110;        // px falloff radius
+
+    dock.addEventListener('mousemove', (e) => {
+      for (const item of dockItems) {
+        const r = item.getBoundingClientRect();
+        const dist = Math.abs(e.clientX - (r.left + r.width / 2));
+        const boost = Math.max(0, 1 - dist / RANGE);
+        const s = 1 + MAX_SCALE * boost * boost;
+        item.style.transform = 'translateY(' + (-8 * boost * boost).toFixed(2) + 'px) scale(' + s.toFixed(3) + ')';
+      }
+    });
+    dock.addEventListener('mouseleave', () => {
+      for (const item of dockItems) item.style.transform = '';
+    });
+  }
 });
