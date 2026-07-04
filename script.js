@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { ic: '✉', label: 'Copy email', hint: 'dbanga@uwaterloo.ca', run: copyEmail },
     { ic: '↗', label: 'Email me', run: () => { location.href = 'mailto:dbanga@uwaterloo.ca'; } },
     { ic: '⇩', label: 'Open résumé', hint: 'PDF', run: () => window.open('assets/DivyamResumeSv.pdf', '_blank', 'noopener') },
-    { ic: '', label: 'GitHub profile', run: () => window.open('https://github.com/DivyamBanga', '_blank', 'noopener') },
+    { ic: '⌥', label: 'GitHub profile', run: () => window.open('https://github.com/DivyamBanga', '_blank', 'noopener') },
     { ic: 'in', label: 'LinkedIn', run: () => window.open('https://www.linkedin.com/in/divyambanga', '_blank', 'noopener') },
     { ic: '◐', label: 'Toggle appearance', hint: 'light / dark', run: toggleTheme }
   ];

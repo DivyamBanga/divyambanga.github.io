@@ -98,6 +98,9 @@ body::after {
 a { color: inherit; }
 button { font: inherit; color: inherit; }
 
+/* `display` on .sheet/.palette must not defeat the hidden attribute */
+[hidden] { display: none !important; }
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -337,6 +340,7 @@ button { font: inherit; color: inherit; }
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(7, 1fr);
+  grid-auto-columns: 1fr;
   gap: 2px;
   align-content: center;
   min-height: 44px;
