@@ -121,4 +121,95 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const item of dockItems) item.style.transform = '';
     });
   }
+
+  /* ===== Spotlight palette (⌘K / Ctrl+K) ===== */
+  const palette = document.getElementById('palette');
+  const paletteInput = document.getElementById('paletteInput');
+  const paletteList = document.getElementById('paletteList');
+
+  const commands = [
+    { ic: '◳', label: 'Cortex — case study', hint: '1st / 95+', run: () => openSheet('cortex') },
+    { ic: '◉', label: 'Lucid — case study', hint: 'HackCanada', run: () => openSheet('lucid') },
+    { ic: '❋', label: 'myFarm — case study', hint: 'NASA winner', run: () => openSheet('myfarm') },
+    { ic: '✉', label: 'Copy email', hint: 'dbanga@uwaterloo.ca', run: copyEmail },
+    { ic: '↗', label: 'Email me', run: () => { location.href = 'mailto:dbanga@uwaterloo.ca'; } },
+    { ic: '⇩', label: 'Open résumé', hint: 'PDF', run: () => window.open('assets/DivyamResumeSv.pdf', '_blank', 'noopener') },
+    { ic: '', label: 'GitHub profile', run: () => window.open('https://github.com/DivyamBanga', '_blank', 'noopener') },
+    { ic: 'in', label: 'LinkedIn', run: () => window.open('https://www.linkedin.com/in/divyambanga', '_blank', 'noopener') },
+    { ic: '◐', label: 'Toggle appearance', hint: 'light / dark', run: toggleTheme }
+  ];
+
+  function copyEmail() {
+    const done = () => { paletteInput.placeholder = 'Copied dbanga@uwaterloo.ca ✓'; };
+    if (navigator.clipboard) navigator.clipboard.writeText('dbanga@uwaterloo.ca').then(done, done);
+  }
+
+  let filtered = commands;
+  let selected = 0;
+
+  function renderPalette() {
+    const q = paletteInput.value.trim().toLowerCase();
+    filtered = q
+      ? commands.filter((c) => (c.label + ' ' + (c.hint || '')).toLowerCase().includes(q))
+      : commands;
+    selected = Math.min(selected, Math.max(0, filtered.length - 1));
+    paletteList.replaceChildren(...filtered.map((c, i) => {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', String(i === selected));
+      const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = c.ic;
+      const label = document.createElement('span'); label.textContent = c.label;
+      li.append(ic, label);
+      if (c.hint) { const k = document.createElement('span'); k.className = 'k'; k.textContent = c.hint; li.append(k); }
+      li.addEventListener('click', () => runCommand(c));
+      li.addEventListener('mousemove', () => { if (selected !== i) { selected = i; renderPalette(); } });
+      return li;
+    }));
+    if (!filtered.length) {
+      const li = document.createElement('li');
+      li.className = 'palette__empty';
+      li.textContent = 'No results';
+      paletteList.replaceChildren(li);
+    }
+  }
+
+  function runCommand(c) {
+    closePalette();
+    c.run();
+  }
+
+  function openPalette() {
+    if (!sheet.hidden) closeSheet();
+    palette.hidden = false;
+    paletteInput.value = '';
+    paletteInput.placeholder = 'Search projects, actions…';
+    selected = 0;
+    renderPalette();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      palette.classList.add('is-open');
+      paletteInput.focus();
+    }));
+  }
+
+  function closePalette() {
+    palette.classList.remove('is-open');
+    setTimeout(() => { palette.hidden = true; }, 250);
+  }
+
+  document.getElementById('paletteBtn').addEventListener('click', openPalette);
+  palette.addEventListener('click', (e) => { if (e.target === palette) closePalette(); });
+  paletteInput.addEventListener('input', () => { selected = 0; renderPalette(); });
+  paletteInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); selected = (selected + 1) % filtered.length; renderPalette(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); selected = (selected - 1 + filtered.length) % filtered.length; renderPalette(); }
+    else if (e.key === 'Enter' && filtered[selected]) { runCommand(filtered[selected]); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      palette.hidden ? openPalette() : closePalette();
+    } else if (e.key === 'Escape' && !palette.hidden) {
+      closePalette();
+    }
+  });
 });
