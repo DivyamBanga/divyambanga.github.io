@@ -117,10 +117,11 @@ p:last-child { margin-bottom: 0; }
 }
 .cell + .cell { border-top: 1px solid var(--line); }
 
-/* Left column proportions on the locked layout */
-.cell--hero { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.cell--projects { flex: 1.2; }
-.cell--off { flex: 0.65; }
+/* Left column: projects size to their content (details can open
+   without overlapping anything); hero and off share the rest. */
+.cell--hero { flex: 1.5 1 0; display: flex; flex-direction: column; justify-content: center; }
+.cell--projects { flex: 0 0 auto; }
+.cell--off { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; }
 .cell--timeline { flex: 1; overflow: hidden; }
 
 /* One screen on desktop. Phones and tablets scroll like normal pages. */
@@ -182,9 +183,9 @@ h3 {
 .rotator {
   display: inline-block;
   position: relative;
-  height: 1.45em;
-  vertical-align: bottom;
-  perspective: 500px;
+  white-space: nowrap;
+  vertical-align: baseline;
+  perspective: 400px;
   transition: width 0.5s var(--ease);
 }
 .rotator__word {
@@ -192,47 +193,70 @@ h3 {
   white-space: nowrap;
   color: var(--ink);
   font-weight: 600;
-  backface-visibility: hidden;
-  transform-origin: 50% 50% -0.55em;
 }
-/* Only animating words float; the resting word keeps natural width
-   so the line still reads right without JS. */
-.rotator__word.is-in,
+/* The outgoing word floats in place while the incoming word sits in
+   normal flow, so the baseline always matches the sentence. */
 .rotator__word.is-out {
   position: absolute;
   left: 0;
   top: 0;
 }
-.rotator__word.is-in { animation: roll-in 0.7s var(--ease) both; will-change: transform, opacity, filter; }
-.rotator__word.is-out { animation: roll-out 0.7s var(--ease) both; will-change: transform, opacity, filter; }
-@keyframes roll-in {
-  0% { transform: translateY(0.4em) rotateX(-80deg); opacity: 0; filter: blur(4px); }
-  55% { opacity: 1; }
+.rotator__l {
+  display: inline-block;
+  backface-visibility: hidden;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+.rotator__l.l-in { animation: l-in 0.5s var(--ease) both; animation-delay: var(--d, 0ms); }
+.rotator__l.l-out { animation: l-out 0.38s cubic-bezier(0.45, 0, 0.75, 0.35) both; animation-delay: var(--d, 0ms); }
+@keyframes l-in {
+  0% { transform: translateY(0.55em) rotateX(-72deg); opacity: 0; filter: blur(2px); }
   100% { transform: none; opacity: 1; filter: blur(0); }
 }
-@keyframes roll-out {
+@keyframes l-out {
   0% { transform: none; opacity: 1; filter: blur(0); }
-  45% { opacity: 0.4; }
-  100% { transform: translateY(-0.4em) rotateX(80deg); opacity: 0; filter: blur(4px); }
+  100% { transform: translateY(-0.55em) rotateX(72deg); opacity: 0; filter: blur(2px); }
 }
 
 /* ---------- Projects ---------- */
 .projgrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(14px, 2vw, 26px);
+  gap: clamp(16px, 2.2vw, 30px);
+  align-items: start;
 }
-.proj p { color: var(--dim); font-size: 14px; }
-.proj__more { font-size: 13px; }
+.proj { display: flex; flex-direction: column; }
+.proj p { color: var(--dim); font-size: 14px; margin: 0 0 6px; }
+.proj__more { font-size: 13px; align-self: flex-start; margin-top: 2px; }
 
-.projstrip {
-  margin-top: clamp(12px, 1.6vw, 18px);
+/* Detail opens inside its own column, pushing nothing sideways. */
+.proj__detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows 0.5s var(--ease), opacity 0.35s ease,
+    visibility 0s linear 0.5s;
+}
+.proj.is-open .proj__detail {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition: grid-template-rows 0.5s var(--ease), opacity 0.4s ease 0.08s,
+    visibility 0s;
+}
+.proj__detail-inner { overflow: hidden; }
+.proj__detail-inner p {
+  padding-top: 2px;
+  margin-bottom: 6px;
+}
+.proj__detail a { font-size: 13px; }
+
+.also {
+  margin: clamp(14px, 2vw, 20px) 0 0;
   padding-top: clamp(10px, 1.4vw, 14px);
   border-top: 1px solid var(--line);
-  min-height: 3.6em;
-  font-size: 14px;
 }
-.projstrip p { margin: 0; }
 
 /* ---------- Timeline ---------- */
 .tl {
@@ -279,6 +303,24 @@ h3 {
   color: var(--dim);
 }
 .tl p { margin: 1px 0 0; font-size: 14px; }
+
+/* ---------- YC badge ---------- */
+.yc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 5px;
+  border-radius: 3px;
+  background: #fb651e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  vertical-align: -2px;
+}
+.yc:hover { filter: brightness(1.08); }
 
 /* ---------- Buttons that read as links ---------- */
 .linklike {

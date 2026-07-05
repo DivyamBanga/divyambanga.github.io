@@ -39,74 +39,66 @@ document.addEventListener('DOMContentLoaded', () => {
   setMetaThemeColor();
   updateThemeLabel();
 
-  /* ===== Rotating word (3D prism roll) ===== */
+  /* ===== Rotating word (per-letter cascade) ===== */
   const rotator = document.getElementById('rotator');
   const words = ['a builder', 'an engineer', 'a runner', 'a player', 'a developer', 'a winner', 'a designer'];
 
-  function measureWord(text) {
-    const probe = document.createElement('span');
-    probe.className = 'rotator__word';
-    probe.style.visibility = 'hidden';
-    probe.style.position = 'absolute';
-    probe.textContent = text;
-    rotator.appendChild(probe);
-    const w = probe.offsetWidth;
-    probe.remove();
+  function buildWord(text, entering) {
+    const w = document.createElement('span');
+    w.className = 'rotator__word';
+    Array.from(text).forEach((ch, i) => {
+      const l = document.createElement('span');
+      l.className = 'rotator__l' + (entering ? ' l-in' : '');
+      // Old letters leave first, new letters follow a beat behind.
+      l.style.setProperty('--d', (entering ? 120 + i * 26 : i * 22) + 'ms');
+      l.textContent = ch === ' ' ? ' ' : ch;
+      w.appendChild(l);
+    });
     return w;
   }
 
   if (rotator && !reducedMotion) {
     let index = 0;
-    rotator.style.width = measureWord(words[0]) + 'px';
+    rotator.replaceChildren(buildWord(words[0], false));
+    rotator.style.width = rotator.getBoundingClientRect().width + 'px';
 
     setInterval(() => {
       if (document.hidden) return;
       index = (index + 1) % words.length;
       const oldWord = rotator.querySelector('.rotator__word:not(.is-out)');
-      const next = document.createElement('span');
-      next.className = 'rotator__word is-in';
-      next.textContent = words[index];
       if (oldWord) {
-        oldWord.classList.remove('is-in');
         oldWord.classList.add('is-out');
-        setTimeout(() => oldWord.remove(), 750);
+        oldWord.querySelectorAll('.rotator__l').forEach((l, i) => {
+          l.classList.remove('l-in');
+          l.style.setProperty('--d', (i * 22) + 'ms');
+          l.classList.add('l-out');
+        });
+        setTimeout(() => oldWord.remove(), 900);
       }
+      const next = buildWord(words[index], true);
       rotator.appendChild(next);
-      rotator.style.width = measureWord(words[index]) + 'px';
+      requestAnimationFrame(() => {
+        rotator.style.width = next.getBoundingClientRect().width + 'px';
+      });
     }, 2800);
   }
 
-  /* ===== Project detail strip ===== */
-  const strip = document.getElementById('projstrip');
-  const stripDefault = strip.innerHTML;
-  const moreBtns = Array.from(document.querySelectorAll('.proj__more'));
-  let activeProj = null;
+  /* ===== Project details (one open at a time, inside its column) ===== */
+  const projs = Array.from(document.querySelectorAll('.proj'));
 
-  function closeStrip() {
-    activeProj = null;
-    strip.innerHTML = stripDefault;
-    moreBtns.forEach((b) => {
-      b.setAttribute('aria-expanded', 'false');
-      b.textContent = 'more';
+  function setProjects(openProjEl) {
+    projs.forEach((p) => {
+      const open = p === openProjEl;
+      p.classList.toggle('is-open', open);
+      const btn = p.querySelector('.proj__more');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? 'less' : 'more';
     });
   }
 
-  function openProject(id) {
-    const tpl = document.getElementById('detail-' + id);
-    if (!tpl) return;
-    activeProj = id;
-    strip.replaceChildren(tpl.content.cloneNode(true));
-    moreBtns.forEach((b) => {
-      const active = b.dataset.proj === id;
-      b.setAttribute('aria-expanded', String(active));
-      b.textContent = active ? 'less' : 'more';
-    });
-  }
-
-  moreBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (activeProj === btn.dataset.proj) closeStrip();
-      else openProject(btn.dataset.proj);
+  projs.forEach((p) => {
+    p.querySelector('.proj__more').addEventListener('click', () => {
+      setProjects(p.classList.contains('is-open') ? null : p);
     });
   });
 
@@ -128,8 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const paletteList = document.getElementById('paletteList');
 
   function showProject(id) {
-    openProject(id);
-    document.querySelector('.cell--projects').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const p = document.getElementById(id);
+    if (!p) return;
+    setProjects(p);
+    p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   const commands = [

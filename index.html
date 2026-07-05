@@ -26,7 +26,7 @@
   <link rel="canonical" href="https://divyambanga.github.io/">
   <link rel="icon" type="image/png" href="assets/favicon.png"/>
   <link rel="apple-touch-icon" href="assets/favicon.png">
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -66,49 +66,53 @@
         <p class="iam">I am
           <span class="rotator" id="rotator" aria-hidden="true"><span class="rotator__word">a builder</span></span><span class="sr-only">a builder and an engineer</span>
         </p>
-        <p>Engineering student at Waterloo, software intern at <a href="https://www.piinpoint.com" target="_blank" rel="noopener">PiinPoint</a>.</p>
+        <p>Engineering student at Waterloo, software intern at <a href="https://www.piinpoint.com" target="_blank" rel="noopener">PiinPoint</a><a class="yc" href="https://www.ycombinator.com/companies/piinpoint" target="_blank" rel="noopener" aria-label="PiinPoint on Y Combinator">Y</a>.</p>
         <p>I like building things with AI that people actually use. Five hackathon wins so far.</p>
       </section>
 
       <section class="cell cell--projects">
         <h2>Projects</h2>
         <div class="projgrid">
-          <article class="proj">
+          <article class="proj" id="cortex">
             <h3>Cortex</h3>
             <p>Memory for AI chats, so you stop repeating yourself to the model. Won CxC, first of 95 teams.</p>
-            <button class="linklike proj__more" type="button" data-proj="cortex" aria-expanded="false">more</button>
+            <div class="proj__detail">
+              <div class="proj__detail-inner">
+                <p>Built in 36 hours with two friends. It saves your past chats, finds the relevant ones, and hands that context to new conversations. I made the backend and a 3D map of your chat history.
+                  <a href="https://github.com/Vibhor7-7/Cortex-CxC" target="_blank" rel="noopener">See the code</a></p>
+              </div>
+            </div>
+            <button class="linklike proj__more" type="button" aria-expanded="false">more</button>
           </article>
-          <article class="proj">
+          <article class="proj" id="lucid">
             <h3>Lucid</h3>
             <p>A study app that watches your focus through the camera and adjusts when you drift. HackCanada finalist.</p>
-            <button class="linklike proj__more" type="button" data-proj="lucid" aria-expanded="false">more</button>
+            <div class="proj__detail">
+              <div class="proj__detail-inner">
+                <p>Reads heart rate, blinking and breathing from the camera alone, no wearables. When the numbers say you have checked out, the lesson slows down or switches format.
+                  <a href="https://github.com/DivyamBanga/Lucid" target="_blank" rel="noopener">See the code</a></p>
+              </div>
+            </div>
+            <button class="linklike proj__more" type="button" aria-expanded="false">more</button>
           </article>
-          <article class="proj">
+          <article class="proj" id="myfarm">
             <h3>myFarm</h3>
             <p>Shows farmers where to plant using NASA satellite data. Won NASA Space Apps.</p>
-            <button class="linklike proj__more" type="button" data-proj="myfarm" aria-expanded="false">more</button>
+            <div class="proj__detail">
+              <div class="proj__detail-inner">
+                <p>Pulls satellite and soil moisture data, turns it into simple planting maps, and answers questions through a small chatbot.
+                  <a href="https://github.com/Doomsy1/NASA" target="_blank" rel="noopener">See the code</a></p>
+              </div>
+            </div>
+            <button class="linklike proj__more" type="button" aria-expanded="false">more</button>
           </article>
         </div>
-        <div class="projstrip" id="projstrip" aria-live="polite">
-          <p class="dim projstrip__also">also:
-            <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener">AskMyData</a>,
-            <a href="https://github.com/DivyamBanga/DarkStar" target="_blank" rel="noopener">DarkStar</a>,
-            <a href="https://github.com/DivyamBanga/Chess-Engine" target="_blank" rel="noopener">a chess engine</a>
-            and <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener">a scouting app</a>
-          </p>
-        </div>
-        <template id="detail-cortex">
-          <p class="dim">Built in 36 hours with two friends. It saves your past chats, finds the relevant ones, and hands that context to new conversations. I made the backend and a 3D map of your chat history.
-            <a href="https://github.com/Vibhor7-7/Cortex-CxC" target="_blank" rel="noopener">See the code</a></p>
-        </template>
-        <template id="detail-lucid">
-          <p class="dim">Reads heart rate, blinking and breathing from the camera alone, no wearables. When the numbers say you have checked out, the lesson slows down or switches format.
-            <a href="https://github.com/DivyamBanga/Lucid" target="_blank" rel="noopener">See the code</a></p>
-        </template>
-        <template id="detail-myfarm">
-          <p class="dim">Pulls satellite and soil moisture data, turns it into simple planting maps, and answers questions through a small chatbot.
-            <a href="https://github.com/Doomsy1/NASA" target="_blank" rel="noopener">See the code</a></p>
-        </template>
+        <p class="also dim small">also
+          <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener">AskMyData</a> ·
+          <a href="https://github.com/DivyamBanga/DarkStar" target="_blank" rel="noopener">DarkStar</a> ·
+          <a href="https://github.com/DivyamBanga/Chess-Engine" target="_blank" rel="noopener">a chess engine</a> ·
+          <a href="https://github.com/DivyamBanga" target="_blank" rel="noopener">a scouting app</a>
+        </p>
       </section>
 
       <section class="cell cell--off">
@@ -126,23 +130,23 @@
         <ol class="tl">
           <li class="tl__now">
             <time>now</time>
-            <p>Interning at PiinPoint in Waterloo.</p>
+            <p>Interning at <a href="https://www.piinpoint.com" target="_blank" rel="noopener">PiinPoint</a><a class="yc" href="https://www.ycombinator.com/companies/piinpoint" target="_blank" rel="noopener" aria-label="PiinPoint on Y Combinator">Y</a>.</p>
           </li>
           <li>
             <time>Jan 2026</time>
-            <p>Won CxC, first of 95 teams.</p>
+            <p>Won CxC and HackCanada. First of 95 teams at CxC.</p>
           </li>
           <li>
             <time>2025</time>
-            <p>First internship at Eurolink. My tools saved the team about 15 hours a week.</p>
+            <p>Software developer co-op at a logistics firm. My internal tools saved the team about 15 hours a week.</p>
           </li>
           <li>
-            <time>Oct 2024</time>
-            <p>Won NASA Space Apps with myFarm.</p>
+            <time>2024</time>
+            <p>Won NASA Space Apps and MasseyHacks.</p>
           </li>
           <li>
             <time>Sep 2024</time>
-            <p>Started Management Engineering at Waterloo.</p>
+            <p>Started studying engineering at Waterloo.</p>
           </li>
         </ol>
       </section>
@@ -175,6 +179,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
+  <script src="fluid.js?v=1" defer></script>
 </body>
 </html>
