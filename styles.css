@@ -11,6 +11,7 @@
   --dim: #6f6f69;
   --line: #e5e5e0;
   --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.16);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text",
     "Segoe UI", Helvetica, Arial, sans-serif;
 }
@@ -90,7 +91,7 @@ p:last-child { margin-bottom: 0; }
 #paint {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 5; /* above the grid so lifted cells never hide the paint */
   pointer-events: none;
 }
 
@@ -128,14 +129,20 @@ p:last-child { margin-bottom: 0; }
   .grid { height: 100%; }
 }
 
-/* The one hover move: lift and pop, text never reflows. */
+/* Hover: the cell you point at eases forward while the rest of the
+   grid quietly settles back. Transforms only, text never reflows. */
 @media (hover: hover) and (min-width: 1024px) {
   .cell {
-    transition: transform 0.35s cubic-bezier(0.3, 0.8, 0.3, 1),
-      box-shadow 0.35s ease, background-color 0.35s ease;
+    transition: transform 0.55s var(--ease), box-shadow 0.55s ease,
+      background-color 0.55s ease, opacity 0.55s ease;
+    will-change: transform;
+  }
+  .grid:has(.cell:hover) .cell:not(:hover) {
+    transform: scale(0.992);
+    opacity: 0.82;
   }
   .cell:hover {
-    transform: translateY(-2px) scale(1.012);
+    transform: translateY(-2px) scale(1.016);
     background: var(--bg);
     box-shadow: var(--shadow);
     z-index: 2;
@@ -177,8 +184,8 @@ h3 {
   position: relative;
   height: 1.45em;
   vertical-align: bottom;
-  perspective: 600px;
-  transition: width 0.35s cubic-bezier(0.3, 0.8, 0.3, 1);
+  perspective: 500px;
+  transition: width 0.5s var(--ease);
 }
 .rotator__word {
   display: inline-block;
@@ -196,15 +203,17 @@ h3 {
   left: 0;
   top: 0;
 }
-.rotator__word.is-in { animation: roll-in 0.55s cubic-bezier(0.3, 0.8, 0.3, 1) both; }
-.rotator__word.is-out { animation: roll-out 0.55s cubic-bezier(0.55, 0.2, 0.7, 0.6) both; }
+.rotator__word.is-in { animation: roll-in 0.7s var(--ease) both; will-change: transform, opacity, filter; }
+.rotator__word.is-out { animation: roll-out 0.7s var(--ease) both; will-change: transform, opacity, filter; }
 @keyframes roll-in {
-  from { transform: rotateX(-88deg); opacity: 0; }
-  to { transform: rotateX(0); opacity: 1; }
+  0% { transform: translateY(0.4em) rotateX(-80deg); opacity: 0; filter: blur(4px); }
+  55% { opacity: 1; }
+  100% { transform: none; opacity: 1; filter: blur(0); }
 }
 @keyframes roll-out {
-  from { transform: rotateX(0); opacity: 1; }
-  to { transform: rotateX(88deg); opacity: 0; }
+  0% { transform: none; opacity: 1; filter: blur(0); }
+  45% { opacity: 0.4; }
+  100% { transform: translateY(-0.4em) rotateX(80deg); opacity: 0; filter: blur(4px); }
 }
 
 /* ---------- Projects ---------- */
@@ -290,7 +299,7 @@ h3 {
 .palette {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 60;
   display: flex;
   justify-content: center;
   align-items: flex-start;

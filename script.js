@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rotator.style.width = measureWord(words[0]) + 'px';
 
     setInterval(() => {
+      if (document.hidden) return;
       index = (index + 1) % words.length;
       const oldWord = rotator.querySelector('.rotator__word:not(.is-out)');
       const next = document.createElement('span');
@@ -68,11 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (oldWord) {
         oldWord.classList.remove('is-in');
         oldWord.classList.add('is-out');
-        setTimeout(() => oldWord.remove(), 600);
+        setTimeout(() => oldWord.remove(), 750);
       }
       rotator.appendChild(next);
       rotator.style.width = measureWord(words[index]) + 'px';
-    }, 2600);
+    }, 2800);
   }
 
   /* ===== Project detail strip ===== */
@@ -226,8 +227,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ===== Watercolor paint trail =====
-     A canvas behind the text. Each mouse move drops soft blobs of
-     slowly shifting color that spread a little and fade out. */
+     A canvas above the page (pointer-events off, low alpha, so text
+     stays readable and nothing can hide it). Each movement drops
+     irregular washes of shifting color that bloom outward like
+     pigment in water, drift a little, and fade. */
   const canvas = document.getElementById('paint');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -245,21 +248,31 @@ document.addEventListener('DOMContentLoaded', () => {
     resize();
     window.addEventListener('resize', resize);
 
-    const blobs = [];
-    const MAX_BLOBS = 340;
+    const drops = [];
+    const MAX_DROPS = 160;
+    const VERTS = 9;
     let hue = Math.random() * 360;
     let last = null;
 
-    function emit(x, y) {
-      hue = (hue + 9) % 360;
-      blobs.push({
-        x: x + (Math.random() - 0.5) * 12 * dpr,
-        y: y + (Math.random() - 0.5) * 12 * dpr,
-        r: (14 + Math.random() * 22) * dpr,
-        hue: hue + (Math.random() * 40 - 20),
-        life: 1
+    function emit(x, y, speed) {
+      hue = (hue + 11) % 360;
+      // Irregular edge: each vertex keeps its own radius multiplier.
+      const jag = [];
+      for (let i = 0; i < VERTS; i++) jag.push(0.72 + Math.random() * 0.56);
+      drops.push({
+        x: x, y: y,
+        vx: (Math.random() - 0.5) * 0.4 * dpr,
+        vy: (Math.random() - 0.5) * 0.4 * dpr - 0.08 * dpr,
+        r0: (6 + Math.random() * 10) * dpr,
+        grow: (34 + Math.random() * 44 + Math.min(40, speed * 0.35)) * dpr,
+        hue: hue + (Math.random() * 36 - 18),
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.012,
+        jag: jag,
+        life: 1,
+        decay: 0.008 + Math.random() * 0.005
       });
-      if (blobs.length > MAX_BLOBS) blobs.splice(0, blobs.length - MAX_BLOBS);
+      if (drops.length > MAX_DROPS) drops.splice(0, drops.length - MAX_DROPS);
     }
 
     window.addEventListener('pointermove', (e) => {
@@ -268,30 +281,65 @@ document.addEventListener('DOMContentLoaded', () => {
       if (last) {
         const dx = x - last.x;
         const dy = y - last.y;
-        const steps = Math.min(8, Math.max(1, Math.round(Math.hypot(dx, dy) / (16 * dpr))));
-        for (let i = 1; i <= steps; i++) emit(last.x + (dx * i) / steps, last.y + (dy * i) / steps);
+        const dist = Math.hypot(dx, dy);
+        const steps = Math.min(4, Math.max(1, Math.round(dist / (30 * dpr))));
+        for (let i = 1; i <= steps; i++) {
+          emit(last.x + (dx * i) / steps, last.y + (dy * i) / steps, dist / dpr);
+        }
       } else {
-        emit(x, y);
+        emit(x, y, 0);
       }
       last = { x, y };
     }, { passive: true });
 
+    function drawDrop(d) {
+      const t = 1 - d.life;
+      // Pigment blooms fast, then settles.
+      const r = d.r0 + d.grow * (1 - Math.pow(1 - t, 2.4));
+      const fade = d.life > 0.75 ? (1 - d.life) * 4 : d.life / 0.75;
+      const alpha = 0.14 * fade;
+      if (alpha <= 0.002) return;
+
+      const g = ctx.createRadialGradient(d.x, d.y, r * 0.15, d.x, d.y, r * 1.12);
+      g.addColorStop(0, 'hsla(' + d.hue + ', 62%, 58%, ' + alpha + ')');
+      g.addColorStop(0.72, 'hsla(' + d.hue + ', 62%, 58%, ' + alpha * 0.55 + ')');
+      g.addColorStop(1, 'hsla(' + d.hue + ', 62%, 58%, 0)');
+      ctx.fillStyle = g;
+
+      // Wobbly closed curve through the jagged vertices.
+      ctx.beginPath();
+      const pts = [];
+      for (let i = 0; i < VERTS; i++) {
+        const a = d.rot + (i / VERTS) * Math.PI * 2;
+        pts.push([d.x + Math.cos(a) * r * d.jag[i], d.y + Math.sin(a) * r * d.jag[i]]);
+      }
+      for (let i = 0; i < VERTS; i++) {
+        const p = pts[i];
+        const n = pts[(i + 1) % VERTS];
+        const mx = (p[0] + n[0]) / 2;
+        const my = (p[1] + n[1]) / 2;
+        if (i === 0) ctx.moveTo(mx, my);
+        else ctx.quadraticCurveTo(p[0], p[1], mx, my);
+      }
+      const p0 = pts[0];
+      const m0x = (pts[VERTS - 1][0] + p0[0]) / 2;
+      const m0y = (pts[VERTS - 1][1] + p0[1]) / 2;
+      ctx.quadraticCurveTo(p0[0], p0[1], m0x, m0y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
     (function frame() {
-      if (blobs.length) {
+      if (drops.length) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = blobs.length - 1; i >= 0; i--) {
-          const b = blobs[i];
-          b.life -= 0.018;
-          b.r *= 1.008;
-          if (b.life <= 0) { blobs.splice(i, 1); continue; }
-          const alpha = 0.16 * b.life;
-          const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-          g.addColorStop(0, 'hsla(' + b.hue + ', 65%, 60%, ' + alpha + ')');
-          g.addColorStop(1, 'hsla(' + b.hue + ', 65%, 60%, 0)');
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-          ctx.fill();
+        for (let i = drops.length - 1; i >= 0; i--) {
+          const d = drops[i];
+          d.life -= d.decay;
+          if (d.life <= 0) { drops.splice(i, 1); continue; }
+          d.x += d.vx;
+          d.y += d.vy;
+          d.rot += d.vr;
+          drawDrop(d);
         }
       }
       requestAnimationFrame(frame);
