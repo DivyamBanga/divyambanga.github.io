@@ -369,9 +369,9 @@
   initFramebuffers();
 
   /* ---------- Pointer ---------- */
-  var splats = [];
+  var pointer = null;  // latest cursor position
+  var prevPos = null;  // position already painted up to
   var hue = Math.random();
-  var lastPos = null;
 
   function inkColor() {
     hue = (hue + 0.018) % 1;
@@ -385,19 +385,34 @@
   }
 
   window.addEventListener('pointermove', function (e) {
-    var x = e.clientX / window.innerWidth;
-    var y = 1 - e.clientY / window.innerHeight;
-    if (lastPos) {
-      splats.push({
-        x: x, y: y,
-        dx: (x - lastPos.x) * SPLAT_FORCE,
-        dy: (y - lastPos.y) * SPLAT_FORCE,
+    pointer = {
+      x: e.clientX / window.innerWidth,
+      y: 1 - e.clientY / window.innerHeight
+    };
+    if (!prevPos) prevPos = pointer;
+  }, { passive: true });
+
+  /* Paint a continuous stroke from wherever we painted last, right up
+     to the current cursor position, every frame. The stroke head is
+     always exactly on the pointer. */
+  function paintToPointer() {
+    if (!pointer || !prevPos) return;
+    var dx = pointer.x - prevPos.x;
+    var dy = pointer.y - prevPos.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 0.0001) return;
+    var n = Math.min(8, Math.max(1, Math.ceil(dist / 0.006)));
+    for (var i = 1; i <= n; i++) {
+      splat({
+        x: prevPos.x + (dx * i) / n,
+        y: prevPos.y + (dy * i) / n,
+        dx: (dx / n) * SPLAT_FORCE,
+        dy: (dy / n) * SPLAT_FORCE,
         color: inkColor()
       });
-      if (splats.length > 24) splats.splice(0, splats.length - 24);
     }
-    lastPos = { x: x, y: y };
-  }, { passive: true });
+    prevPos = pointer;
+  }
 
   function splat(s) {
     splatProgram.bind();
@@ -496,7 +511,7 @@
     lastTime = now;
     if (resizeCanvas()) initFramebuffers();
     if (!document.hidden) {
-      while (splats.length) splat(splats.pop());
+      paintToPointer();
       step(dt);
       render();
     }
