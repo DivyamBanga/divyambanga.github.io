@@ -68,9 +68,9 @@
   var PRESSURE = 0.8;
   var PRESSURE_ITERATIONS = 18;
   var CURL = 10;                   // swirl strength
-  var SPLAT_RADIUS = 0.0005;       // ink pour width
+  var SPLAT_RADIUS = 0.0007;       // ink pour width
   var SPLAT_FORCE = 2200;
-  var INK_AMOUNT = 0.14;
+  var INK_AMOUNT = 0.17;
 
   /* ---------- Shaders ---------- */
   function compile(type, source) {
@@ -267,7 +267,7 @@
     'uniform sampler2D uTexture;',
     'void main () {',
     '  vec3 c = texture2D(uTexture, vUv).rgb;',
-    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.5, 0.0, 0.32);',
+    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.5, 0.0, 0.36);',
     '  gl_FragColor = vec4(c * 1.15, a);',
     '}'
   ].join('\n'));
@@ -388,10 +388,8 @@
     var x = e.clientX / window.innerWidth;
     var y = 1 - e.clientY / window.innerHeight;
     if (lastPos) {
-      // Drop the ink where the cursor just was, so the color trails
-      // behind the pointer instead of spraying out ahead of it.
       splats.push({
-        x: lastPos.x, y: lastPos.y,
+        x: x, y: y,
         dx: (x - lastPos.x) * SPLAT_FORCE,
         dy: (y - lastPos.y) * SPLAT_FORCE,
         color: inkColor()
