@@ -83,25 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2800);
   }
 
-  /* ===== Project details (one open at a time, inside its column) ===== */
-  const projs = Array.from(document.querySelectorAll('.proj'));
-
-  function setProjects(openProjEl) {
-    projs.forEach((p) => {
-      const open = p === openProjEl;
-      p.classList.toggle('is-open', open);
-      const btn = p.querySelector('.proj__more');
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'less' : 'more';
-    });
-  }
-
-  projs.forEach((p) => {
-    p.querySelector('.proj__more').addEventListener('click', () => {
-      setProjects(p.classList.contains('is-open') ? null : p);
-    });
-  });
-
   /* ===== GitHub line in Off the clock ===== */
   const ghline = document.getElementById('ghline');
   fetch('https://github-contributions-api.jogruber.de/v4/DivyamBanga?y=last')
@@ -119,17 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const paletteInput = document.getElementById('paletteInput');
   const paletteList = document.getElementById('paletteList');
 
-  function showProject(id) {
-    const p = document.getElementById(id);
-    if (!p) return;
-    setProjects(p);
-    p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  function openRepo(url) {
+    window.open(url, '_blank', 'noopener');
   }
 
   const commands = [
-    { label: 'Cortex', hint: 'won CxC', run: () => showProject('cortex') },
-    { label: 'Lucid', hint: 'HackCanada finalist', run: () => showProject('lucid') },
-    { label: 'myFarm', hint: 'won NASA Space Apps', run: () => showProject('myfarm') },
+    { label: 'Cortex', hint: 'won CxC', run: () => openRepo('https://github.com/Vibhor7-7/Cortex-CxC') },
+    { label: 'Lucid', hint: 'HackCanada finalist', run: () => openRepo('https://github.com/DivyamBanga/Lucid') },
+    { label: 'myFarm', hint: 'won NASA Space Apps', run: () => openRepo('https://github.com/Doomsy1/NASA') },
     { label: 'Copy email', hint: 'dbanga@uwaterloo.ca', run: copyEmail },
     { label: 'Email me', run: () => { location.href = 'mailto:dbanga@uwaterloo.ca'; } },
     { label: 'Resume', hint: 'PDF', run: () => window.open('assets/DivyamResumeSv.pdf', '_blank', 'noopener') },

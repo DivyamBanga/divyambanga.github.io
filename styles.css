@@ -226,31 +226,8 @@ h3 {
   align-items: start;
 }
 .proj { display: flex; flex-direction: column; }
-.proj p { color: var(--dim); font-size: 14px; margin: 0 0 6px; }
-.proj__more { font-size: 13px; align-self: flex-start; margin-top: 2px; }
-
-/* Detail opens inside its own column, pushing nothing sideways. */
-.proj__detail {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  visibility: hidden;
-  transition: grid-template-rows 0.5s var(--ease), opacity 0.35s ease,
-    visibility 0s linear 0.5s;
-}
-.proj.is-open .proj__detail {
-  grid-template-rows: 1fr;
-  opacity: 1;
-  visibility: visible;
-  transition: grid-template-rows 0.5s var(--ease), opacity 0.4s ease 0.08s,
-    visibility 0s;
-}
-.proj__detail-inner { overflow: hidden; }
-.proj__detail-inner p {
-  padding-top: 2px;
-  margin-bottom: 6px;
-}
-.proj__detail a { font-size: 13px; }
+.proj p { color: var(--dim); font-size: 14px; margin: 0 0 8px; }
+.proj__link { font-size: 13px; align-self: flex-start; margin-top: auto; }
 
 .also {
   margin: clamp(14px, 2vw, 20px) 0 0;
