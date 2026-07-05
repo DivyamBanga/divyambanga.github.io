@@ -304,21 +304,30 @@ h3 {
 }
 .tl p { margin: 1px 0 0; font-size: 14px; }
 
-/* ---------- YC badge ---------- */
+/* ---------- YC badge ----------
+   Sized and aligned like an inline icon: 1em square, nudged down
+   an eighth of an em, so it sits on the text line at any size. */
 .yc {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 15px;
-  height: 15px;
-  margin-left: 5px;
-  border-radius: 3px;
+  display: inline-block;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.3em;
+  border-radius: 0.2em;
   background: #fb651e;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
   text-decoration: none;
-  vertical-align: -2px;
+  vertical-align: -0.125em;
+}
+.yc::after {
+  content: "Y";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.64em;
+  font-weight: 700;
+  line-height: 1;
 }
 .yc:hover { filter: brightness(1.08); }
 

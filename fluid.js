@@ -63,14 +63,14 @@
   /* ---------- Config ---------- */
   var SIM_RESOLUTION = 96;
   var DYE_RESOLUTION = 512;
-  var DENSITY_DISSIPATION = 1.4;   // how fast ink fades
-  var VELOCITY_DISSIPATION = 0.55; // how fast motion calms down
+  var DENSITY_DISSIPATION = 2.4;   // how fast ink fades
+  var VELOCITY_DISSIPATION = 0.9;  // how fast motion calms down
   var PRESSURE = 0.8;
   var PRESSURE_ITERATIONS = 18;
-  var CURL = 20;                   // swirl strength
-  var SPLAT_RADIUS = 0.0016;       // ink pour width
-  var SPLAT_FORCE = 5200;
-  var INK_AMOUNT = 0.3;
+  var CURL = 10;                   // swirl strength
+  var SPLAT_RADIUS = 0.0005;       // ink pour width
+  var SPLAT_FORCE = 2200;
+  var INK_AMOUNT = 0.14;
 
   /* ---------- Shaders ---------- */
   function compile(type, source) {
@@ -267,8 +267,8 @@
     'uniform sampler2D uTexture;',
     'void main () {',
     '  vec3 c = texture2D(uTexture, vUv).rgb;',
-    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.7, 0.0, 0.5);',
-    '  gl_FragColor = vec4(c * 1.4, a);',
+    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.5, 0.0, 0.32);',
+    '  gl_FragColor = vec4(c * 1.15, a);',
     '}'
   ].join('\n'));
 
@@ -378,7 +378,7 @@
     var h = hue * 6;
     var i = Math.floor(h);
     var f = h - i;
-    var v = 1, s = 0.62;
+    var v = 1, s = 0.45;
     var p = v * (1 - s), q = v * (1 - s * f), t = v * (1 - s * (1 - f));
     var rgb = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i % 6];
     return { r: rgb[0] * INK_AMOUNT, g: rgb[1] * INK_AMOUNT, b: rgb[2] * INK_AMOUNT };
@@ -388,8 +388,10 @@
     var x = e.clientX / window.innerWidth;
     var y = 1 - e.clientY / window.innerHeight;
     if (lastPos) {
+      // Drop the ink where the cursor just was, so the color trails
+      // behind the pointer instead of spraying out ahead of it.
       splats.push({
-        x: x, y: y,
+        x: lastPos.x, y: lastPos.y,
         dx: (x - lastPos.x) * SPLAT_FORCE,
         dy: (y - lastPos.y) * SPLAT_FORCE,
         color: inkColor()
