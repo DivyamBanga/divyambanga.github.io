@@ -107,19 +107,6 @@ p:last-child { margin-bottom: 0; }
   border: 1px solid var(--line);
   display: flex;
 }
-/* Constructor sweep line: rides exactly at the reveal's leading edge
-   (same easing and duration), so the frame, dividers, and text all
-   come in right at the line. It sits outside .grid__build so the
-   reveal clip never cuts it. */
-.scan {
-  position: absolute;
-  top: 0; bottom: 0; left: 0;
-  width: 1px;
-  background: var(--ink);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 3;
-}
 
 .col { display: flex; flex-direction: column; min-width: 0; }
 .col--left { flex: 2.1; }
@@ -166,52 +153,59 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ---------- Entrance ----------
-   One left-to-right reveal draws the whole grid at once, frame and
-   dividers and text together, while a faint hairline (the constructor)
-   rides exactly at its leading edge, so everything comes in right at
-   the line. Same easing and duration on both keep them locked. The
-   clip reverts after (no retained fill) so it never cuts the hover
-   shadows. Desktop only; phones get the plain fade below. */
+   The grid draws itself in: every hairline traces itself (horizontals
+   left to right, verticals top to bottom, like graph paper being drawn)
+   and the content materializes with them, so the whole thing reads as
+   one minimal grid being drawn. Real borders go transparent (kept for
+   layout) and pseudo lines draw over exactly where they sat. Frame
+   leads, then the inner lines, then the text. Desktop only; phones
+   get the plain fade below. */
 @media (min-width: 1024px) {
-  /* The clip reveals the content and the horizontal lines (top and
-     bottom frame, cell dividers), which draw left to right with the
-     sweep. The vertical frame edges are hidden here and redrawn below. */
-  .grid__build {
-    animation: reveal-lr 2.55s var(--ease-soft) backwards;
-    border-left-color: transparent;
-    border-right-color: transparent;
-  }
-  .col--right { border-left-color: transparent; }
-  .scan { animation: scan 2.55s var(--ease-soft) forwards; }
+  .grid__build { position: relative; border-color: transparent; }
+  .col--right { position: relative; border-left-color: transparent; }
+  .cell + .cell { border-top-color: transparent; }
 
-  /* Vertical lines draw top to bottom as the sweep reaches each one, so
-     the grid rectangles construct rather than just appear. They live on
-     .grid, outside the clipped build, so the reveal never cuts them, and
-     they stay put afterward as the real left edge, divider, right edge. */
-  .grid::before, .grid::after, .vdiv {
+  .grid__build::before, .grid__build::after,
+  .col--right::before,
+  .cell + .cell::before {
     content: "";
     position: absolute;
-    top: 0; bottom: 0;
-    width: 1px;
+    pointer-events: none;
     background: var(--line);
-    transform-origin: center top;
-    z-index: 2;
   }
-  .grid::before { left: 0; animation: vdraw 0.85s var(--ease-soft) 0.05s backwards; }
-  .vdiv { left: 67.7%; animation: vdraw 0.8s var(--ease-soft) 1.45s backwards; }
-  .grid::after { right: 0; animation: vdraw 0.75s var(--ease-soft) 1.95s backwards; }
+  /* Frame leads: top and bottom draw right, left and right draw down,
+     unfolding from the top-left corner. */
+  .grid__build::before {
+    inset: -1px; background: none;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform-origin: left center;
+    animation: draw-x 1s var(--ease-soft) backwards;
+  }
+  .grid__build::after {
+    inset: -1px; background: none;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    transform-origin: center top;
+    animation: draw-y 1s var(--ease-soft) backwards;
+  }
+  /* Inner lines draw the same way, a beat behind the frame. */
+  .col--right::before {
+    top: 0; bottom: 0; left: -1px; width: 1px;
+    transform-origin: center top;
+    animation: draw-y 0.85s var(--ease-soft) 0.2s backwards;
+  }
+  .cell + .cell::before {
+    top: -1px; left: 0; right: 0; height: 1px;
+    transform-origin: left center;
+    animation: draw-x 0.85s var(--ease-soft) 0.2s backwards;
+  }
+  /* Content materializes with the lines. */
+  .cell > * { animation: draw-fade 0.9s var(--ease-soft) 0.25s backwards; }
 }
-@keyframes reveal-lr {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-@keyframes scan {
-  0% { left: 0; opacity: 0; }
-  8% { opacity: 0.32; }
-  92% { opacity: 0.32; }
-  100% { left: 100%; opacity: 0; }
-}
-@keyframes vdraw { from { transform: scaleY(0); } }
+@keyframes draw-x { from { transform: scaleX(0); } }
+@keyframes draw-y { from { transform: scaleY(0); } }
+@keyframes draw-fade { from { opacity: 0; } }
 
 /* ---------- Type ---------- */
 h1 {
