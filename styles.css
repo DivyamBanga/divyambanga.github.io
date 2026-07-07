@@ -151,19 +151,48 @@ p:last-child { margin-bottom: 0; }
   }
 }
 
-/* ---------- Entrance ----------
-   The grid draws itself in: every hairline traces itself (horizontals
-   left to right, verticals top to bottom, like graph paper being drawn)
-   and the content materializes with them, so the whole thing reads as
-   one minimal grid being drawn. Real borders go transparent (kept for
-   layout) and pseudo lines draw over exactly where they sat. Frame
-   leads, then the inner lines, then the text. Desktop only; phones
-   get the plain fade below. */
+/* ---------- Entrance: the draftsman ----------
+   An invisible pen drafts the grid one hairline at a time: around the
+   frame in a single unbroken stroke (top, right, bottom, left), then a
+   lift, then each inner line in turn. Every line draws in hot and
+   cools to hairline gray once the pen has passed. Content materializes
+   cell by cell as the pen encloses it. The whole timeline hangs off
+   the --u-* segment durations: script.js measures the real grid and
+   overwrites them so pen speed is constant on any screen, then drives
+   the glowing pen tip along the same clock. The fallback values below
+   approximate a 1100x750 grid. Desktop only; phones get the plain
+   fade further down. */
 @media (min-width: 1024px) {
+  .grid {
+    --lead: 0.3s;  /* blank beat before the pen touches down */
+    --hop: 0.28s;  /* pen lift from the frame to the first inner line */
+    --hop2: 0.23s; /* pen lift between inner lines */
+    --u-top: 0.42s; --u-right: 0.29s; --u-bottom: 0.42s; --u-left: 0.29s;
+    --u-vdiv: 0.29s; --u-h1: 0.29s; --u-h3: 0.14s; --u-h2: 0.29s;
+    /* one clock: every line starts where the previous one ended */
+    --t-top: var(--lead);
+    --t-right: calc(var(--t-top) + var(--u-top));
+    --t-bottom: calc(var(--t-right) + var(--u-right));
+    --t-left: calc(var(--t-bottom) + var(--u-bottom));
+    --t-vdiv: calc(var(--t-left) + var(--u-left) + var(--hop));
+    --t-h1: calc(var(--t-vdiv) + var(--u-vdiv) + var(--hop2));
+    --t-h3: calc(var(--t-h1) + var(--u-h1) + var(--hop2));
+    --t-h2: calc(var(--t-h3) + var(--u-h3) + var(--hop2));
+    /* content follows the pen into each cell */
+    --t-hero: calc(var(--t-top) + var(--u-top) * 0.5);
+    --t-tl: calc(var(--t-vdiv) + var(--u-vdiv) * 0.5);
+    --t-proj: calc(var(--t-h1) + var(--u-h1));
+    --t-contact: calc(var(--t-h3) + var(--u-h3) * 0.6);
+    --t-off: calc(var(--t-h2) + var(--u-h2) * 0.7);
+  }
+
+  /* Real borders stay for layout but go clear; pseudo lines draw over
+     exactly where they sat, one line per pseudo element. */
   .grid__build { position: relative; border-color: transparent; }
   .col--right { position: relative; border-left-color: transparent; }
   .cell + .cell { border-top-color: transparent; }
 
+  .grid::before, .grid::after,
   .grid__build::before, .grid__build::after,
   .col--right::before,
   .cell + .cell::before {
@@ -172,47 +201,104 @@ p:last-child { margin-bottom: 0; }
     pointer-events: none;
     background: var(--line);
   }
-  /* Frame leads: top and bottom draw right, left and right draw down,
-     unfolding from the top-left corner. */
-  .grid__build::before {
-    inset: -1px; background: none;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+
+  /* The frame, one unbroken stroke around the page. */
+  .grid::before { /* top, left to right */
+    top: 0; left: 0; right: 0; height: 1px;
     transform-origin: left center;
-    animation: draw-x 1s var(--ease-soft) backwards;
+    animation: draw-x var(--u-top) linear var(--t-top) backwards,
+               cool 0.9s linear calc(var(--t-top) + var(--u-top)) backwards;
   }
-  .grid__build::after {
-    inset: -1px; background: none;
-    border-left: 1px solid var(--line);
-    border-right: 1px solid var(--line);
+  .grid::after { /* right, downward */
+    top: 0; right: 0; bottom: 0; width: 1px;
     transform-origin: center top;
-    animation: draw-y 1.3s var(--ease-soft) backwards;
+    animation: draw-y var(--u-right) linear var(--t-right) backwards,
+               cool 0.9s linear calc(var(--t-right) + var(--u-right)) backwards;
   }
-  /* Inner lines draw the same way; the vertical divider draws down
-     slowly so the grid keeps constructing downward with the text. */
-  .col--right::before {
+  .grid__build::before { /* bottom, right to left */
+    left: -1px; right: -1px; bottom: -1px; height: 1px;
+    transform-origin: right center;
+    animation: draw-x var(--u-bottom) linear var(--t-bottom) backwards,
+               cool 0.9s linear calc(var(--t-bottom) + var(--u-bottom)) backwards;
+  }
+  .grid__build::after { /* left, upward, closing the frame */
+    left: -1px; top: -1px; bottom: -1px; width: 1px;
+    transform-origin: center bottom;
+    animation: draw-y var(--u-left) linear var(--t-left) backwards,
+               cool 0.9s linear calc(var(--t-left) + var(--u-left)) backwards;
+  }
+
+  /* Inner lines, one at a time. */
+  .col--right::before { /* column divider, downward */
     top: 0; bottom: 0; left: -1px; width: 1px;
     transform-origin: center top;
-    animation: draw-y 1.2s var(--ease-soft) 0.15s backwards;
+    animation: draw-y var(--u-vdiv) linear var(--t-vdiv) backwards,
+               cool 0.9s linear calc(var(--t-vdiv) + var(--u-vdiv)) backwards;
   }
   .cell + .cell::before {
     top: -1px; left: 0; right: 0; height: 1px;
     transform-origin: left center;
-    animation: draw-x 0.85s var(--ease-soft) 0.2s backwards;
   }
-  /* Content fades in cell by cell from the top-left down, so the text
-     fills in as the grid is drawn. Slow fades that overlap read as one
-     downward flow rather than five separate pops. */
-  .cell > * { animation: draw-fade 0.95s var(--ease-soft) backwards; }
-  .cell--hero > * { animation-delay: 0.3s; }
-  .cell--timeline > * { animation-delay: 0.45s; }
-  .cell--projects > * { animation-delay: 0.6s; }
-  .cell--off > * { animation-delay: 0.8s; }
-  .cell--contact > * { animation-delay: 0.9s; }
+  .cell--projects::before {
+    animation: draw-x var(--u-h1) linear var(--t-h1) backwards,
+               cool 0.9s linear calc(var(--t-h1) + var(--u-h1)) backwards;
+  }
+  .cell--contact::before {
+    animation: draw-x var(--u-h3) linear var(--t-h3) backwards,
+               cool 0.9s linear calc(var(--t-h3) + var(--u-h3)) backwards;
+  }
+  .cell--off::before {
+    animation: draw-x var(--u-h2) linear var(--t-h2) backwards,
+               cool 0.9s linear calc(var(--t-h2) + var(--u-h2)) backwards;
+  }
+
+  /* Content rises and sharpens as its cell is enclosed, staggered
+     child by child. Headings also decode in script.js on this clock.
+     Project cards and timeline entries get their own cascade. */
+  .cell > *, .proj, .tl li {
+    animation: rise 0.85s var(--ease-soft) calc(var(--tc, 0s) + var(--stag, 0s)) backwards;
+  }
+  .projgrid, .tl { animation: none; }
+  .cell--hero { --tc: var(--t-hero); }
+  .cell--timeline { --tc: var(--t-tl); }
+  .cell--projects { --tc: var(--t-proj); }
+  .cell--off { --tc: var(--t-off); }
+  .cell--contact { --tc: var(--t-contact); }
+  .cell > *:nth-child(2) { --stag: 0.12s; }
+  .cell > *:nth-child(3) { --stag: 0.24s; }
+  .cell > *:nth-child(4) { --stag: 0.36s; }
+  .proj:nth-child(1) { --stag: 0.12s; }
+  .proj:nth-child(2) { --stag: 0.22s; }
+  .proj:nth-child(3) { --stag: 0.32s; }
+  .tl li:nth-child(1) { --stag: 0.1s; }
+  .tl li:nth-child(2) { --stag: 0.19s; }
+  .tl li:nth-child(3) { --stag: 0.28s; }
+  .tl li:nth-child(4) { --stag: 0.37s; }
+  .tl li:nth-child(5) { --stag: 0.46s; }
+  .cell--timeline .tl::before { /* the timeline's own spine draws down too */
+    transform-origin: center top;
+    animation: draw-y 0.6s var(--ease-soft) calc(var(--t-tl) + 0.1s) backwards;
+  }
 }
 @keyframes draw-x { from { transform: scaleX(0); } }
 @keyframes draw-y { from { transform: scaleY(0); } }
-@keyframes draw-fade { from { opacity: 0; } }
+@keyframes cool { from { background-color: var(--line-hot); } }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); filter: blur(3px); }
+}
+
+/* ---------- Pen tip (created by script.js during the entrance) ---------- */
+.pen {
+  position: absolute;
+  top: -3px; left: -3px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 4px 1px var(--pen-glow), 0 0 16px 4px var(--pen-glow);
+  z-index: 7;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
 
 /* ---------- Type ---------- */
 h1 {
