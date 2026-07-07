@@ -323,6 +323,15 @@ h3 {
 }
 .linklike:hover { text-decoration-color: var(--ink); }
 
+/* ---------- Theme crossfade ----------
+   Dark and light dissolve into each other instead of snapping.
+   Skipped when the browser lacks View Transitions or motion is off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: var(--ease);
+}
+
 /* ---------- Command palette ---------- */
 .palette {
   position: fixed;

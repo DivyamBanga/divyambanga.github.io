@@ -26,12 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     themeBtn.textContent = effectiveTheme() === 'dark' ? 'Light mode' : 'Dark mode';
   }
 
-  function toggleTheme() {
+  function applyTheme() {
     const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch (e) {}
     setMetaThemeColor();
     updateThemeLabel();
+  }
+
+  // Crossfade the whole page between light and dark where supported.
+  function toggleTheme() {
+    if (document.startViewTransition && !reducedMotion) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
   }
 
   themeBtn.addEventListener('click', toggleTheme);
