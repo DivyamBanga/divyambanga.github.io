@@ -173,8 +173,33 @@ p:last-child { margin-bottom: 0; }
    clip reverts after (no retained fill) so it never cuts the hover
    shadows. Desktop only; phones get the plain fade below. */
 @media (min-width: 1024px) {
-  .grid__build { animation: reveal-lr 2.3s var(--ease-soft) backwards; }
+  /* The clip reveals the content and the horizontal lines (top and
+     bottom frame, cell dividers), which draw left to right with the
+     sweep. The vertical frame edges are hidden here and redrawn below. */
+  .grid__build {
+    animation: reveal-lr 2.3s var(--ease-soft) backwards;
+    border-left-color: transparent;
+    border-right-color: transparent;
+  }
+  .col--right { border-left-color: transparent; }
   .scan { animation: scan 2.3s var(--ease-soft) forwards; }
+
+  /* Vertical lines draw top to bottom as the sweep reaches each one, so
+     the grid rectangles construct rather than just appear. They live on
+     .grid, outside the clipped build, so the reveal never cuts them, and
+     they stay put afterward as the real left edge, divider, right edge. */
+  .grid::before, .grid::after, .vdiv {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--line);
+    transform-origin: center top;
+    z-index: 2;
+  }
+  .grid::before { left: 0; animation: vdraw 0.55s var(--ease-soft) 0.05s backwards; }
+  .vdiv { left: 67.7%; animation: vdraw 0.5s var(--ease-soft) 1.3s backwards; }
+  .grid::after { right: 0; animation: vdraw 0.45s var(--ease-soft) 1.95s backwards; }
 }
 @keyframes reveal-lr {
   from { clip-path: inset(0 100% 0 0); }
@@ -186,6 +211,7 @@ p:last-child { margin-bottom: 0; }
   92% { opacity: 0.32; }
   100% { left: 100%; opacity: 0; }
 }
+@keyframes vdraw { from { transform: scaleY(0); } }
 
 /* ---------- Type ---------- */
 h1 {
