@@ -12,6 +12,7 @@
   --line: #e5e5e0;
   --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.16);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.65, 0, 0.35, 1); /* slow-in, slow-out, for the entrance */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text",
     "Segoe UI", Helvetica, Arial, sans-serif;
 }
@@ -102,10 +103,10 @@ p:last-child { margin-bottom: 0; }
   margin: auto;
   border: 1px solid var(--line);
   display: flex;
-  animation: content-in 1.3s var(--ease) both;
+  animation: content-in 1.8s var(--ease-soft) both;
 }
-/* Text fades up first; on desktop the hairlines then draw themselves
-   in (see the entrance block below). */
+/* Text fades up slowly; on desktop the hairlines draw in alongside it
+   (see the entrance block below). */
 @keyframes content-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -156,11 +157,11 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ---------- Desktop entrance ----------
-   After the text has faded up, every hairline sketches itself in. The
-   real 1px borders go transparent (kept in place so nothing shifts)
-   and pseudo-element lines draw over exactly where they sat, staying
-   put once drawn. Frame first, then the dividers. Phones keep the
-   plain fade above. */
+   As the text fades up, every hairline draws itself in alongside it, a
+   slow synchronized bloom. The real 1px borders go transparent (kept
+   in place so nothing shifts) and pseudo-element lines draw over
+   exactly where they sat, staying put once drawn. The frame leads by a
+   hair, then the dividers. Phones keep the plain fade above. */
 @media (min-width: 1024px) {
   .grid { position: relative; border-color: transparent; }
   .col--right { position: relative; border-left-color: transparent; }
@@ -182,14 +183,14 @@ p:last-child { margin-bottom: 0; }
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     transform-origin: left center;
-    animation: line-x 0.9s var(--ease) 0.85s backwards;
+    animation: line-x 1.4s var(--ease-soft) 0.2s backwards;
   }
   .grid::after {
     inset: -1px;
     border-left: 1px solid var(--line);
     border-right: 1px solid var(--line);
     transform-origin: center top;
-    animation: line-y 0.9s var(--ease) 0.85s backwards;
+    animation: line-y 1.4s var(--ease-soft) 0.2s backwards;
   }
 
   /* Column divider sweeps down. */
@@ -197,7 +198,7 @@ p:last-child { margin-bottom: 0; }
     top: 0; bottom: 0; left: -1px; width: 1px;
     background: var(--line);
     transform-origin: center top;
-    animation: line-y 0.8s var(--ease) 1.05s backwards;
+    animation: line-y 1.3s var(--ease-soft) 0.35s backwards;
   }
 
   /* Cell dividers sweep right. */
@@ -205,7 +206,7 @@ p:last-child { margin-bottom: 0; }
     top: -1px; left: 0; right: 0; height: 1px;
     background: var(--line);
     transform-origin: left center;
-    animation: line-x 0.75s var(--ease) 1.15s backwards;
+    animation: line-x 1.25s var(--ease-soft) 0.45s backwards;
   }
 
   /* The "also" divider sweeps right. */
@@ -213,13 +214,13 @@ p:last-child { margin-bottom: 0; }
     top: -1px; left: 0; right: 0; height: 1px;
     background: var(--line);
     transform-origin: left center;
-    animation: line-x 0.7s var(--ease) 1.2s backwards;
+    animation: line-x 1.2s var(--ease-soft) 0.5s backwards;
   }
 
   /* Timeline spine sweeps down. */
   .tl::before {
     transform-origin: center top;
-    animation: line-y 0.85s var(--ease) 1.2s backwards;
+    animation: line-y 1.3s var(--ease-soft) 0.5s backwards;
   }
 }
 
