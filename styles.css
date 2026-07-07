@@ -177,12 +177,12 @@ p:last-child { margin-bottom: 0; }
      bottom frame, cell dividers), which draw left to right with the
      sweep. The vertical frame edges are hidden here and redrawn below. */
   .grid__build {
-    animation: reveal-lr 2.3s var(--ease-soft) backwards;
+    animation: reveal-lr 2.55s var(--ease-soft) backwards;
     border-left-color: transparent;
     border-right-color: transparent;
   }
   .col--right { border-left-color: transparent; }
-  .scan { animation: scan 2.3s var(--ease-soft) forwards; }
+  .scan { animation: scan 2.55s var(--ease-soft) forwards; }
 
   /* Vertical lines draw top to bottom as the sweep reaches each one, so
      the grid rectangles construct rather than just appear. They live on
@@ -197,9 +197,9 @@ p:last-child { margin-bottom: 0; }
     transform-origin: center top;
     z-index: 2;
   }
-  .grid::before { left: 0; animation: vdraw 0.55s var(--ease-soft) 0.05s backwards; }
-  .vdiv { left: 67.7%; animation: vdraw 0.5s var(--ease-soft) 1.3s backwards; }
-  .grid::after { right: 0; animation: vdraw 0.45s var(--ease-soft) 1.95s backwards; }
+  .grid::before { left: 0; animation: vdraw 0.85s var(--ease-soft) 0.05s backwards; }
+  .vdiv { left: 67.7%; animation: vdraw 0.8s var(--ease-soft) 1.45s backwards; }
+  .grid::after { right: 0; animation: vdraw 0.75s var(--ease-soft) 1.95s backwards; }
 }
 @keyframes reveal-lr {
   from { clip-path: inset(0 100% 0 0); }
