@@ -88,7 +88,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function introDone(ms) {
-    setTimeout(() => window.dispatchEvent(new Event('intro:done')), ms);
+    setTimeout(() => {
+      window.dispatchEvent(new Event('intro:done'));
+      initGlow();
+    }, ms);
+  }
+
+  /* ===== Hairline glow =====
+     After the entrance, the grid stays quietly alive: strips laid over
+     every hairline carry a radial highlight that follows the cursor. */
+  let glowBuilt = false;
+  function initGlow() {
+    if (glowBuilt || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    glowBuilt = true;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'glowlines';
+    wrap.setAttribute('aria-hidden', 'true');
+    grid.appendChild(wrap);
+
+    function build() {
+      const geo = gridGeometry();
+      const px = window.scrollX + geo.rect.left;
+      const py = window.scrollY + geo.rect.top;
+      const lines = [
+        { x: 0, y: 0, w: geo.W, h: 1 },                           // frame top
+        { x: geo.W - 1, y: 0, w: 1, h: geo.H },                   // frame right
+        { x: 0, y: geo.H - 1, w: geo.W, h: 1 },                   // frame bottom
+        { x: 0, y: 0, w: 1, h: geo.H },                           // frame left
+        { x: geo.xDiv, y: 0, w: 1, h: geo.H },                    // column divider
+        { x: 0, y: geo.y1, w: geo.xDiv, h: 1 },                   // hero / projects
+        { x: 0, y: geo.y2, w: geo.xDiv, h: 1 },                   // projects / off
+        { x: geo.xDiv, y: geo.y3, w: geo.W - geo.xDiv, h: 1 }     // timeline / contact
+      ];
+      wrap.replaceChildren(...lines.map((l) => {
+        const s = document.createElement('i');
+        s.className = 'glowline';
+        s.style.cssText =
+          'left:' + l.x + 'px;top:' + l.y + 'px;width:' + l.w + 'px;height:' + l.h + 'px;' +
+          '--ox:' + (px + l.x) + 'px;--oy:' + (py + l.y) + 'px;';
+        return s;
+      }));
+    }
+    build();
+    requestAnimationFrame(() => wrap.classList.add('is-on'));
+
+    let raf = 0, mx = 0, my = 0;
+    window.addEventListener('pointermove', (e) => {
+      mx = e.pageX;
+      my = e.pageY;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        root.style.setProperty('--mx', mx + 'px');
+        root.style.setProperty('--my', my + 'px');
+      });
+    }, { passive: true });
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 160);
+    });
   }
 
   (function intro() {

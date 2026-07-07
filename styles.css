@@ -300,6 +300,27 @@ p:last-child { margin-bottom: 0; }
   will-change: transform, opacity;
 }
 
+/* ---------- Hairline glow (created by script.js after the entrance)
+   Invisible strips sit exactly on the grid lines and carry a soft
+   radial highlight that follows the pointer, so the hairlines wake
+   up near the cursor. --mx/--my track the pointer in page pixels;
+   each strip subtracts its own page offset. ---------- */
+.glowlines {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.glowlines.is-on { opacity: 1; }
+.glowline {
+  position: absolute;
+  background: radial-gradient(
+    circle 130px at calc(var(--mx, -9999px) - var(--ox, 0px)) calc(var(--my, -9999px) - var(--oy, 0px)),
+    var(--line-glow), transparent 78%);
+}
+
 /* ---------- Type ---------- */
 h1 {
   margin: 0 0 10px;
