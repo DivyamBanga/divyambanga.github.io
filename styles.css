@@ -101,8 +101,24 @@ p:last-child { margin-bottom: 0; }
   width: 100%;
   max-width: 1100px;
   margin: auto;
+  position: relative;
+}
+.grid__build {
   border: 1px solid var(--line);
   display: flex;
+}
+/* Constructor sweep line: rides exactly at the reveal's leading edge
+   (same easing and duration), so the frame, dividers, and text all
+   come in right at the line. It sits outside .grid__build so the
+   reveal clip never cuts it. */
+.scan {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 1px;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .col { display: flex; flex-direction: column; min-width: 0; }
@@ -126,7 +142,7 @@ p:last-child { margin-bottom: 0; }
 /* One screen on desktop. Phones and tablets scroll like normal pages. */
 @media (min-width: 1024px) and (min-height: 640px) {
   body { height: 100dvh; overflow: hidden; }
-  .grid { height: 100%; }
+  .grid, .grid__build { height: 100%; }
 }
 
 /* Hover: the cell you point at eases forward while the rest of the
@@ -150,105 +166,26 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ---------- Entrance ----------
-   One faint hairline sweeps left to right (the "constructor") and the
-   whole grid is drawn into being in its wake: text wipes in right at
-   the line, the frame and dividers ink in behind it. `.cell > *`
-   matches the text but not the ::before line pseudos, so the content
-   wipe and the line draws never clip each other. Real border hairlines
-   go transparent but keep their 1px so nothing shifts; the drawn lines
-   sit over exactly where they were. Desktop only; phones get the plain
-   fade below. */
+   One left-to-right reveal draws the whole grid at once, frame and
+   dividers and text together, while a faint hairline (the constructor)
+   rides exactly at its leading edge, so everything comes in right at
+   the line. Same easing and duration on both keep them locked. The
+   clip reverts after (no retained fill) so it never cuts the hover
+   shadows. Desktop only; phones get the plain fade below. */
 @media (min-width: 1024px) {
-  .grid {
-    position: relative;
-    border-color: transparent;
-    animation: settle 2.3s var(--ease-soft) backwards;
-  }
-  .col { position: relative; }
-  .col--right { border-left-color: transparent; }
-  .cell + .cell { border-top-color: transparent; }
-
-  /* The constructor: one faint hairline sweeps left to right and the
-     grid lines and text resolve in its wake, as if a single pen drew
-     the whole page. It fades in at the left edge and out at the right,
-     where the closing frame edge draws down as it passes. */
-  .grid::after {
-    content: "";
-    position: absolute;
-    top: -1px; bottom: -1px; left: 0; width: 1px;
-    background: var(--ink);
-    opacity: 0.28;
-    pointer-events: none;
-    z-index: 3;
-    animation: scan 2.3s var(--ease-soft) forwards;
-  }
-
-  /* Content wipes in right at the sweep line, left column then right. */
-  .cell > * { animation: sweep-lr 1.45s var(--ease-soft) 0.1s backwards; }
-  .col--right .cell > * { animation: sweep-lr 0.8s var(--ease-soft) 1.5s backwards; }
-
-  /* Lines ink in behind the sweep line, tracking its position: the
-     left edge and top/bottom lead, the column divider draws as the
-     line reaches it, and the right edge draws down as the line exits. */
-  .grid::before,
-  .col--left::before,
-  .col--right::before, .col--right::after,
-  .cell + .cell::before {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-    background: var(--line);
-  }
-  /* Top and bottom sweep right with the line. */
-  .grid::before {
-    inset: -1px;
-    background: none;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    transform-origin: left center;
-    animation: line-x 2.1s var(--ease-soft) 0.15s backwards;
-  }
-  /* Left frame edge draws first, where the line starts. */
-  .col--left::before {
-    top: -1px; bottom: -1px; left: -1px; width: 1px;
-    transform-origin: center top;
-    animation: line-y 0.7s var(--ease-soft) 0.1s backwards;
-  }
-  /* Column divider draws as the line reaches it. */
-  .col--right::before {
-    top: 0; bottom: 0; left: -1px; width: 1px;
-    transform-origin: center top;
-    animation: line-y 0.75s var(--ease-soft) 1.45s backwards;
-  }
-  /* Right frame edge draws down as the line exits. */
-  .col--right::after {
-    top: -1px; bottom: -1px; right: -1px; width: 1px;
-    transform-origin: center top;
-    animation: line-y 0.55s var(--ease-soft) 1.9s backwards;
-  }
-  /* Cell dividers extend right, left column before right. */
-  .cell + .cell::before {
-    top: -1px; left: 0; right: 0; height: 1px;
-    transform-origin: left center;
-    animation: line-x 1.4s var(--ease-soft) 0.2s backwards;
-  }
-  .col--right .cell + .cell::before { animation-delay: 1.5s; }
+  .grid__build { animation: reveal-lr 2.3s var(--ease-soft) backwards; }
+  .scan { animation: scan 2.3s var(--ease-soft) forwards; }
 }
-
-@keyframes sweep-lr {
-  from { clip-path: inset(0 100% 0 0); opacity: 0; }
-  18% { opacity: 1; }
-  to { clip-path: inset(0 0 0 0); opacity: 1; }
+@keyframes reveal-lr {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
-@keyframes line-x { from { transform: scaleX(0); } }
-@keyframes line-y { from { transform: scaleY(0); } }
 @keyframes scan {
   0% { left: 0; opacity: 0; }
-  10% { opacity: 0.28; }
-  88% { opacity: 0.28; }
+  8% { opacity: 0.32; }
+  92% { opacity: 0.32; }
   100% { left: 100%; opacity: 0; }
 }
-@keyframes settle { from { transform: scale(0.994); } }
 
 /* ---------- Type ---------- */
 h1 {
@@ -480,7 +417,7 @@ h3 {
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1023px) {
-  .grid { flex-direction: column; animation: grid-fade 0.9s var(--ease-soft) backwards; }
+  .grid__build { flex-direction: column; animation: grid-fade 0.9s var(--ease-soft) backwards; }
   .col--right { border-left: none; border-top: 1px solid var(--line); }
   .cell { flex: none; }
 }
