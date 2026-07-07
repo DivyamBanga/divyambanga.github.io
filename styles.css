@@ -103,17 +103,6 @@ p:last-child { margin-bottom: 0; }
   margin: auto;
   border: 1px solid var(--line);
   display: flex;
-  animation: reveal-lr 1.8s var(--ease-soft) backwards;
-}
-/* One soft edge sweeps left to right, unveiling the text and every
-   hairline together, so the whole grid builds up in one direction at
-   once. The leading start is feathered by a short opacity fade. No
-   fill is retained, so the clip is dropped afterward and never clips
-   the lift-on-hover shadows. */
-@keyframes reveal-lr {
-  from { clip-path: inset(0 100% 0 0); opacity: 0; }
-  40% { opacity: 1; }
-  to { clip-path: inset(0 0 0 0); opacity: 1; }
 }
 
 .col { display: flex; flex-direction: column; min-width: 0; }
@@ -159,6 +148,70 @@ p:last-child { margin-bottom: 0; }
     z-index: 2;
   }
 }
+
+/* ---------- Entrance ----------
+   Two separate left-to-right motions. The content sweeps in a little
+   faster (a clip wipe on each text block), while the grid lines are
+   drawn a little slower, tracing the frame and dividers so the grid
+   looks built rather than revealed. `.cell > *` matches the text but
+   not the ::before line pseudos, so the two motions never clip each
+   other. Real border hairlines go transparent but keep their 1px so
+   nothing shifts; the drawn lines sit over exactly where they were.
+   Desktop only; phones get the plain fade below. */
+@media (min-width: 1024px) {
+  .grid { position: relative; border-color: transparent; }
+  .col--right { position: relative; border-left-color: transparent; }
+  .cell + .cell { border-top-color: transparent; }
+
+  /* Content: each text block wipes in left to right, the right column
+     a beat later so the sweep reads across the whole grid. */
+  .cell > * { animation: sweep-lr 1.1s var(--ease-soft) backwards; }
+  .col--right .cell > * { animation-delay: 0.3s; }
+
+  /* Lines: scaled in so they trace the grid, a touch behind the text. */
+  .grid::before, .grid::after,
+  .col--right::before,
+  .cell + .cell::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+  .grid::before {
+    inset: -1px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform-origin: left center;
+    animation: line-x 1.5s var(--ease-soft) 0.15s backwards;
+  }
+  .grid::after {
+    inset: -1px;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    transform-origin: center top;
+    animation: line-y 1.5s var(--ease-soft) 0.15s backwards;
+  }
+  .col--right::before {
+    top: 0; bottom: 0; left: -1px; width: 1px;
+    background: var(--line);
+    transform-origin: center top;
+    animation: line-y 1.15s var(--ease-soft) 0.6s backwards;
+  }
+  .cell + .cell::before {
+    top: -1px; left: 0; right: 0; height: 1px;
+    background: var(--line);
+    transform-origin: left center;
+    animation: line-x 1s var(--ease-soft) 0.4s backwards;
+  }
+  .col--right .cell + .cell::before { animation-delay: 0.75s; }
+}
+
+@keyframes sweep-lr {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  30% { opacity: 1; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes line-x { from { transform: scaleX(0); } }
+@keyframes line-y { from { transform: scaleY(0); } }
 
 /* ---------- Type ---------- */
 h1 {
@@ -390,10 +443,11 @@ h3 {
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1023px) {
-  .grid { flex-direction: column; }
+  .grid { flex-direction: column; animation: grid-fade 0.9s var(--ease-soft) backwards; }
   .col--right { border-left: none; border-top: 1px solid var(--line); }
   .cell { flex: none; }
 }
+@keyframes grid-fade { from { opacity: 0; } }
 
 @media (max-width: 719px) {
   .projgrid { grid-template-columns: 1fr; gap: 14px; }
