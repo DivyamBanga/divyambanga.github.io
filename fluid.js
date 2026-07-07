@@ -395,12 +395,14 @@
   /* Paint a continuous stroke from wherever we painted last, right up
      to the current cursor position, every frame. The stroke head is
      always exactly on the pointer. */
+  var strokeDist = 0; // how much the visitor has painted on their own
   function paintToPointer() {
     if (!pointer || !prevPos) return;
     var dx = pointer.x - prevPos.x;
     var dy = pointer.y - prevPos.y;
     var dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 0.0001) return;
+    strokeDist += dist;
     var n = Math.min(8, Math.max(1, Math.ceil(dist / 0.006)));
     for (var i = 1; i <= n; i++) {
       splat({
@@ -429,6 +431,41 @@
     blit(dye.write);
     dye.swap();
   }
+
+  /* ---------- Welcome wisp ----------
+     When the page finishes drawing itself in (intro:done, announced
+     by script.js), one soft ribbon of ink curls across on its own,
+     so the trail introduces itself before the cursor ever moves.
+     Skipped if the visitor has already painted. */
+  window.addEventListener('intro:done', function () {
+    if (strokeDist > 0.12) return;
+    var t0 = performance.now();
+    var DUR = 1500;
+    var prev = null;
+    (function wisp() {
+      var p = Math.min(1, (performance.now() - t0) / DUR);
+      var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      var x = -0.06 + 0.74 * e;
+      var y = 0.52 + 0.13 * Math.sin(e * Math.PI * 1.6);
+      if (prev) {
+        var dx = x - prev.x;
+        var dy = y - prev.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var n = Math.min(8, Math.max(1, Math.ceil(dist / 0.006)));
+        for (var i = 1; i <= n; i++) {
+          splat({
+            x: prev.x + (dx * i) / n,
+            y: prev.y + (dy * i) / n,
+            dx: (dx / n) * SPLAT_FORCE,
+            dy: (dy / n) * SPLAT_FORCE,
+            color: inkColor()
+          });
+        }
+      }
+      prev = { x: x, y: y };
+      if (p < 1) requestAnimationFrame(wisp);
+    })();
+  }, { once: true });
 
   /* ---------- Simulation step ---------- */
   function step(dt) {
