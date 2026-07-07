@@ -1,37 +1,36 @@
 /* ============================================================
    Divyam Banga
    Flat hairline grid, one screen on desktop. System type.
-   Light and dark. One colorful thing: the paint trail.
+   Dark by default, light on request. One colorful thing: the
+   paint trail. The grid drafts itself in on load.
    ============================================================ */
 
 :root {
-  color-scheme: light dark;
-  --bg: #fafaf8;
-  --ink: #1c1c1a;
-  --dim: #6f6f69;
-  --line: #e5e5e0;
-  --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.16);
+  color-scheme: dark;
+  --bg: #121211;
+  --ink: #eaeae7;
+  --dim: #8f8f88;
+  --line: #2a2a27;
+  --line-hot: #cfcfc7;                   /* a freshly drawn line, before it cools */
+  --line-glow: rgba(234, 234, 231, 0.4); /* hairlines waking up near the cursor */
+  --pen-glow: rgba(234, 234, 231, 0.55);
+  --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.55);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.65, 0, 0.35, 1); /* slow-in, slow-out, for the entrance */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text",
     "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #121211;
-    --ink: #eaeae7;
-    --dim: #8f8f88;
-    --line: #2a2a27;
-    --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.55);
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #121211;
-  --ink: #eaeae7;
-  --dim: #8f8f88;
-  --line: #2a2a27;
-  --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.55);
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fafaf8;
+  --ink: #1c1c1a;
+  --dim: #6f6f69;
+  --line: #e5e5e0;
+  --line-hot: #45453f;
+  --line-glow: rgba(28, 28, 26, 0.3);
+  --pen-glow: rgba(28, 28, 26, 0.4);
+  --shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.16);
 }
 
 /* ---------- Base ---------- */

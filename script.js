@@ -4,22 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = document.documentElement;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ===== Theme ===== */
+  /* ===== Theme (dark unless you chose light) ===== */
   const themeBtn = document.getElementById('themeBtn');
-  const systemDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const effectiveTheme = () => root.getAttribute('data-theme') || (systemDark() ? 'dark' : 'light');
+  const effectiveTheme = () => root.getAttribute('data-theme') || 'dark';
 
   function setMetaThemeColor() {
-    const override = root.getAttribute('data-theme');
-    let m = document.getElementById('tc-dynamic');
-    if (!override) { if (m) m.remove(); return; }
-    if (!m) {
-      m = document.createElement('meta');
-      m.name = 'theme-color';
-      m.id = 'tc-dynamic';
-      document.head.appendChild(m);
-    }
-    m.content = override === 'dark' ? '#121211' : '#fafaf8';
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.content = effectiveTheme() === 'dark' ? '#121211' : '#fafaf8';
   }
 
   function updateThemeLabel() {
@@ -44,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   themeBtn.addEventListener('click', toggleTheme);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeLabel);
   setMetaThemeColor();
   updateThemeLabel();
 
