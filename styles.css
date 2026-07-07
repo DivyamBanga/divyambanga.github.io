@@ -102,9 +102,15 @@ p:last-child { margin-bottom: 0; }
   margin: auto;
   border: 1px solid var(--line);
   display: flex;
-  animation: appear 0.5s ease both;
+  animation: draw-in 0.62s var(--ease);
 }
-@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+/* The grid grows open from a single center hairline on load. No
+   fill-mode, so the clip-path is dropped once it finishes and never
+   clips the lift-on-hover shadows. */
+@keyframes draw-in {
+  from { clip-path: inset(50% 0 50% 0); opacity: 0; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
 
 .col { display: flex; flex-direction: column; min-width: 0; }
 .col--left { flex: 2.1; }
