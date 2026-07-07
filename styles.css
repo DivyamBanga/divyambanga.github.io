@@ -102,14 +102,13 @@ p:last-child { margin-bottom: 0; }
   margin: auto;
   border: 1px solid var(--line);
   display: flex;
-  animation: draw-in 1s var(--ease);
+  animation: content-in 1.3s var(--ease) both;
 }
-/* The grid draws in left to right on load. No fill-mode, so the
-   clip-path is dropped once it finishes and never clips the
-   lift-on-hover shadows. */
-@keyframes draw-in {
-  from { clip-path: inset(0 100% 0 0); opacity: 0; }
-  to { clip-path: inset(0 0 0 0); opacity: 1; }
+/* Text fades up first; on desktop the hairlines then draw themselves
+   in (see the entrance block below). */
+@keyframes content-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .col { display: flex; flex-direction: column; min-width: 0; }
@@ -155,6 +154,77 @@ p:last-child { margin-bottom: 0; }
     z-index: 2;
   }
 }
+
+/* ---------- Desktop entrance ----------
+   After the text has faded up, every hairline sketches itself in. The
+   real 1px borders go transparent (kept in place so nothing shifts)
+   and pseudo-element lines draw over exactly where they sat, staying
+   put once drawn. Frame first, then the dividers. Phones keep the
+   plain fade above. */
+@media (min-width: 1024px) {
+  .grid { position: relative; border-color: transparent; }
+  .col--right { position: relative; border-left-color: transparent; }
+  .also { position: relative; border-top-color: transparent; }
+  .cell + .cell { border-top-color: transparent; }
+
+  .grid::before, .grid::after,
+  .col--right::before,
+  .cell + .cell::before,
+  .also::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Outer frame: top and bottom sweep right, sides sweep down. */
+  .grid::before {
+    inset: -1px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform-origin: left center;
+    animation: line-x 0.9s var(--ease) 0.85s backwards;
+  }
+  .grid::after {
+    inset: -1px;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    transform-origin: center top;
+    animation: line-y 0.9s var(--ease) 0.85s backwards;
+  }
+
+  /* Column divider sweeps down. */
+  .col--right::before {
+    top: 0; bottom: 0; left: -1px; width: 1px;
+    background: var(--line);
+    transform-origin: center top;
+    animation: line-y 0.8s var(--ease) 1.05s backwards;
+  }
+
+  /* Cell dividers sweep right. */
+  .cell + .cell::before {
+    top: -1px; left: 0; right: 0; height: 1px;
+    background: var(--line);
+    transform-origin: left center;
+    animation: line-x 0.75s var(--ease) 1.15s backwards;
+  }
+
+  /* The "also" divider sweeps right. */
+  .also::before {
+    top: -1px; left: 0; right: 0; height: 1px;
+    background: var(--line);
+    transform-origin: left center;
+    animation: line-x 0.7s var(--ease) 1.2s backwards;
+  }
+
+  /* Timeline spine sweeps down. */
+  .tl::before {
+    transform-origin: center top;
+    animation: line-y 0.85s var(--ease) 1.2s backwards;
+  }
+}
+
+@keyframes line-x { from { transform: scaleX(0); } }
+@keyframes line-y { from { transform: scaleY(0); } }
 
 /* ---------- Type ---------- */
 h1 {
@@ -400,6 +470,7 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
 }
