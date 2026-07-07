@@ -102,13 +102,13 @@ p:last-child { margin-bottom: 0; }
   margin: auto;
   border: 1px solid var(--line);
   display: flex;
-  animation: draw-in 0.62s var(--ease);
+  animation: draw-in 1s var(--ease);
 }
-/* The grid grows open from a single center hairline on load. No
-   fill-mode, so the clip-path is dropped once it finishes and never
-   clips the lift-on-hover shadows. */
+/* The grid draws in left to right on load. No fill-mode, so the
+   clip-path is dropped once it finishes and never clips the
+   lift-on-hover shadows. */
 @keyframes draw-in {
-  from { clip-path: inset(50% 0 50% 0); opacity: 0; }
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
   to { clip-path: inset(0 0 0 0); opacity: 1; }
 }
 
