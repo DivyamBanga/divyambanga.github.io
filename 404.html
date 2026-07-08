@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="dark light">
+  <meta name="robots" content="noindex">
+  <title>404 · Div Banga</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png"/>
+  <link rel="stylesheet" href="/styles.css?v=26" />
+  <script>
+    // Same theme rule as the front door.
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    /* One empty cell of the sheet: this page was never drawn. */
+    body { height: auto; overflow: auto; }
+    .nf {
+      width: min(560px, 100%);
+      margin: auto;
+      position: relative;
+      border: 1px solid var(--line);
+      padding: clamp(28px, 6vw, 56px);
+    }
+    .nf::before { /* one line still hot, abandoned mid-stroke */
+      content: "";
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 38%; height: 1px;
+      background: linear-gradient(90deg, var(--line), var(--line-hot));
+    }
+    .nf::after { /* the pen tip, resting where the drawing stopped */
+      content: "";
+      position: absolute;
+      top: -4px; left: calc(38% - 4px);
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 0 4px 1px var(--pen-glow), 0 0 16px 4px var(--pen-glow);
+    }
+    .nf h1 {
+      font-size: clamp(44px, 9vw, 64px);
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    .nf p { color: var(--dim); }
+    .nf .mono {
+      display: block;
+      margin-top: 30px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.09em;
+      color: var(--dim);
+    }
+  </style>
+</head>
+<body>
+  <main class="nf" aria-label="Page not found">
+    <h1>404</h1>
+    <p>This sheet was never drawn.</p>
+    <p><a href="/">Back to the drawing</a></p>
+    <span class="mono">DWG NO. ∅ · SHEET 0/1 · REV —</span>
+  </main>
+</body>
+</html>
