@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
       decodeAt(heroH1, 250);
       document.querySelectorAll('.cell h2').forEach((el) => decodeAt(el, 450));
       document.querySelectorAll('.proj h3').forEach((el, i) => decodeAt(el, 600 + i * 90));
-      scheduleIntroDone(1400);
+      scheduleIntroDone(1700);
       return;
     }
 
