@@ -77,7 +77,7 @@
   var CURL = 10;                   // swirl strength
   var SPLAT_RADIUS = 0.0007;       // ink pour width
   var SPLAT_FORCE = 2200;
-  var INK_AMOUNT = 0.17;
+  var INK_AMOUNT = 0.11;           // quiet: the ink accents, never competes
   var IDLE_MS = 6000;              // sleep this long after the last splat
 
   /* ---------- Shaders ---------- */
@@ -288,8 +288,8 @@
     'uniform sampler2D uTexture;',
     'void main () {',
     '  vec3 c = texture2D(uTexture, vUv).rgb;',
-    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.5, 0.0, 0.36);',
-    '  gl_FragColor = vec4(c * 1.15, a);',
+    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.35, 0.0, 0.26);',
+    '  gl_FragColor = vec4(c * 1.05, a);',
     '}'
   ].join('\n'));
 
@@ -435,7 +435,7 @@
     var h = hue * 6;
     var i = Math.floor(h);
     var f = h - i;
-    var v = 1, s = 0.45;
+    var v = 1, s = 0.38;
     var p = v * (1 - s), q = v * (1 - s * f), t = v * (1 - s * (1 - f));
     var rgb = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i % 6];
     return { r: rgb[0] * INK_AMOUNT, g: rgb[1] * INK_AMOUNT, b: rgb[2] * INK_AMOUNT };
@@ -463,7 +463,7 @@
         y: uv.y + (Math.random() - 0.5) * 0.012,
         dx: Math.cos(a) * k,
         dy: Math.sin(a) * k,
-        color: { r: c.r * 2.2, g: c.g * 2.2, b: c.b * 2.2 },
+        color: { r: c.r * 1.8, g: c.g * 1.8, b: c.b * 1.8 },
         radius: SPLAT_RADIUS * (touchMode ? 4 : 2.6)
       });
     }

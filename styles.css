@@ -563,7 +563,7 @@ h3 {
 }
 .tl li {
   position: relative;
-  padding: 0 0 clamp(10px, 1.7vh, 17px) 22px;
+  padding: 0 0 clamp(10px, 1.5vh, 15px) 22px;
 }
 .tl li:last-child { padding-bottom: 0; }
 .tl li::before {
@@ -601,8 +601,9 @@ h3 {
 }
 .cell--timeline .tl { flex: 1 0 auto; }
 .tblock {
+  position: relative; /* anchors the drawing edge during the entrance */
   flex: none;
-  margin-top: clamp(12px, 2.2vh, 24px);
+  margin-top: clamp(10px, 1.8vh, 18px);
   border: 1px solid var(--line);
   background: var(--line); /* shows through the 1px gaps as hairlines */
   display: grid;
@@ -613,30 +614,63 @@ h3 {
 .tblock__row { display: grid; gap: 1px; }
 .tblock__row--top { grid-template-columns: 1.15fr 0.85fr 0.85fr; }
 .tblock__row--mid { grid-template-columns: 1.15fr 1fr; }
-.tblock__cell { background: var(--bg); padding: 5px 9px 6px; min-width: 0; }
+.tblock__cell { background: var(--bg); padding: 6px 10px 7px; min-width: 0; }
 .tblock__k {
   display: block;
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.09em;
   color: var(--dim);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
-.tblock__v { font-size: 11px; letter-spacing: 0.02em; white-space: nowrap; }
-.tblock__v--dim { color: var(--dim); font-size: 10px; }
-.tblock__row--loc .tblock__cell { padding: 4px 9px 5px; }
+.tblock__v { font-size: 11.5px; letter-spacing: 0.02em; white-space: nowrap; }
+.tblock__v--dim { color: var(--dim); font-size: 10.5px; }
+.tblock__row--loc .tblock__cell { padding: 4px 10px 5px; }
 .sig {
   display: block;
-  width: 50px;
-  height: 30px;
-  margin: 0 0 -4px;
+  width: 64px;
+  height: 29px;
+  margin: 1px 0 -3px;
   color: var(--ink);
 }
 .sig path {
   stroke: currentColor;
-  stroke-width: 1.4;
+  stroke-width: 1.5;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* The block doesn't fade in — it prints itself: a left-to-right
+   wipe behind a hot 1px edge, timed to finish just before the pen
+   lands to sign. --t-tb: phones use the fixed cut; desktop derives
+   it from the entrance clock (0.35s before the last line ends). */
+.grid { --t-tb: 1.15s; }
+@media (min-width: 1024px) {
+  .grid { --t-tb: calc(var(--t-h2) + var(--u-h2) - 0.35s); }
+}
+.grid.is-drafting .cell--timeline .tblock {
+  animation: tb-wipe 0.55s linear var(--t-tb) backwards;
+}
+.grid.is-drafting .cell--timeline .tblock::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 1.5px;
+  background: var(--line-hot);
+  box-shadow: 0 0 5px 1px var(--pen-glow);
+  z-index: 1;
+  pointer-events: none;
+  animation: tb-edge 0.55s linear var(--t-tb) both;
+}
+@keyframes tb-wipe {
+  from { clip-path: inset(-2px calc(100% + 2px) -2px -2px); }
+  to { clip-path: inset(-2px -2px -2px -2px); }
+}
+@keyframes tb-edge {
+  from { left: -1px; opacity: 1; }
+  88% { opacity: 1; }
+  to { left: calc(100% - 1px); opacity: 0; }
 }
 /* Tight one-screen heights: the location strip yields first. */
 @media (min-width: 1024px) and (min-height: 780px) and (max-height: 810px) {
