@@ -385,6 +385,8 @@ h3 {
   vertical-align: baseline;
   perspective: 400px;
   transition: width 0.5s var(--ease);
+  cursor: pointer; /* it's a fidget: click to flip the word */
+  -webkit-tap-highlight-color: transparent;
 }
 .rotator__word {
   display: inline-block;
@@ -532,18 +534,21 @@ h3 {
   animation-timing-function: var(--ease);
 }
 
-/* ---------- Command palette ---------- */
-.palette {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 16vh 16px 0;
+/* ---------- Command palette ----------
+   A native <dialog>: the top layer, Escape handling and focus
+   return come from the platform. It opens with no animation, on
+   purpose — command surfaces should simply be there. */
+dialog.palette {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  margin: 16vh auto auto;
+  width: min(480px, calc(100vw - 32px));
 }
+dialog.palette::backdrop { background: transparent; }
 .palette__panel {
-  width: min(480px, 100%);
+  width: 100%;
   background: var(--bg);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);

@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+
+    ✎ ─────────────────────────────────────────────
+      drafted by hand.
+      vanilla html/css/js — no framework, no build step.
+      the pen that draws the grid is css timing math;
+      the ink that follows your hand is a webgl fluid sim.
+      press ⌘K. not everything is listed.
+
+      https://github.com/DivyamBanga/divyambanga.github.io
+
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -167,13 +179,15 @@
   </main>
 
   <!-- Command palette, hidden until invoked -->
-  <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Search" hidden>
+  <dialog class="palette" id="palette" aria-label="Search">
     <div class="palette__panel">
       <input class="palette__input" id="paletteInput" type="text" placeholder="Search"
-             autocomplete="off" spellcheck="false" aria-label="Search commands">
+             autocomplete="off" spellcheck="false" autofocus
+             role="combobox" aria-expanded="true" aria-controls="paletteList"
+             aria-autocomplete="list" aria-label="Search commands">
       <ul class="palette__list" id="paletteList" role="listbox"></ul>
     </div>
-  </div>
+  </dialog>
 
   <script src="script.js?v=10"></script>
   <script src="fluid.js?v=6" defer></script>

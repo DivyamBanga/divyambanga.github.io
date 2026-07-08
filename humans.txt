@@ -1,0 +1,14 @@
+/* TEAM */
+  Draftsman: Divyam Banga
+  Contact: dbanga [at] uwaterloo.ca
+  From: Waterloo, Ontario, Canada
+  GitHub: @DivyamBanga
+
+/* THANKS */
+  The fluid ink descends from Pavel Dobryakov's stable-fluids WebGL work.
+
+/* SITE */
+  Stack: vanilla HTML, CSS, JavaScript. No framework. No build step.
+  Type: the system stack, as your OS drew it.
+  Colors: two, plus whatever the ink feels like.
+  Drawn: one hairline at a time.

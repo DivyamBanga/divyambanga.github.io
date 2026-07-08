@@ -319,12 +319,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (rotator && !reducedMotion) {
     let index = 0;
+    let timer = 0;
+    let lastAdvance = 0;
     rotator.replaceChildren(buildWord(words[0], false));
     rotator.style.width = rotator.getBoundingClientRect().width + 'px';
 
-    setInterval(() => {
-      if (document.hidden) return;
+    function advance(instant) {
       index = (index + 1) % words.length;
+      if (instant) {
+        // Rapid clicks resolve immediately: repetition earns no flourish.
+        rotator.querySelectorAll('.rotator__word').forEach((w) => w.remove());
+        const swap = buildWord(words[index], false);
+        rotator.appendChild(swap);
+        rotator.style.width = swap.getBoundingClientRect().width + 'px';
+        return;
+      }
       const oldWord = rotator.querySelector('.rotator__word:not(.is-out)');
       if (oldWord) {
         oldWord.classList.add('is-out');
@@ -340,7 +349,21 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
         rotator.style.width = next.getBoundingClientRect().width + 'px';
       });
-    }, 2800);
+    }
+
+    function startRotator() {
+      clearInterval(timer);
+      timer = setInterval(() => { if (!document.hidden) advance(false); }, 2800);
+    }
+    startRotator();
+
+    // The word is a fidget: click (or tap) to flip it yourself.
+    rotator.addEventListener('click', () => {
+      const now = performance.now();
+      advance(now - lastAdvance < 800);
+      lastAdvance = now;
+      startRotator();
+    });
   }
 
   /* ===== GitHub line in Off the clock ===== */
@@ -364,6 +387,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank', 'noopener');
   }
 
+  /* Hidden commands don't appear in the default list; they answer
+     only when someone types for them. Word travels. */
   const commands = [
     { label: 'Cortex', hint: 'won CxC', run: () => openRepo('https://github.com/Vibhor7-7/Cortex-CxC') },
     { label: 'Lucid', hint: 'HackCanada finalist', run: () => openRepo('https://github.com/DivyamBanga/Lucid') },
@@ -373,7 +398,11 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'Resume', hint: 'PDF', run: () => window.open('assets/DivyamResumeSv.pdf', '_blank', 'noopener') },
     { label: 'GitHub', run: () => window.open('https://github.com/DivyamBanga', '_blank', 'noopener') },
     { label: 'LinkedIn', run: () => window.open('https://www.linkedin.com/in/divyambanga', '_blank', 'noopener') },
-    { label: 'Switch appearance', hint: 'light / dark', run: toggleTheme }
+    { label: 'Switch appearance', hint: 'light / dark', run: toggleTheme },
+    { label: 'Spill ink', hint: 'make a mess', hidden: true, match: 'spill ink mess paint storm splash splat',
+      run: () => { if (window.__ink) window.__ink.storm(16); } },
+    { label: 'Replay the entrance', hint: 'draw it again', hidden: true, match: 'replay redraw entrance intro again draft pen',
+      run: replayIntro }
   ];
 
   function copyEmail() {
@@ -387,11 +416,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderPalette() {
     const q = paletteInput.value.trim().toLowerCase();
     filtered = q
-      ? commands.filter((c) => (c.label + ' ' + (c.hint || '')).toLowerCase().includes(q))
-      : commands;
+      ? commands.filter((c) => (c.label + ' ' + (c.hint || '') + ' ' + (c.match || '')).toLowerCase().includes(q))
+      : commands.filter((c) => !c.hidden);
     selected = Math.min(selected, Math.max(0, filtered.length - 1));
     paletteList.replaceChildren(...filtered.map((c, i) => {
       const li = document.createElement('li');
+      li.id = 'palette-opt-' + i;
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', String(i === selected));
       const label = document.createElement('span');
@@ -410,9 +440,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!filtered.length) {
       const li = document.createElement('li');
       li.className = 'palette__empty';
-      li.textContent = 'No results';
+      li.textContent = 'Nothing here — though not everything is listed.';
       paletteList.replaceChildren(li);
+      paletteInput.removeAttribute('aria-activedescendant');
+      return;
     }
+    paletteInput.setAttribute('aria-activedescendant', 'palette-opt-' + selected);
+    const active = document.getElementById('palette-opt-' + selected);
+    if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
   }
 
   function runCommand(c) {
@@ -421,16 +456,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openPalette() {
-    palette.hidden = false;
+    if (palette.open) return;
     paletteInput.value = '';
     paletteInput.placeholder = 'Search';
     selected = 0;
     renderPalette();
-    paletteInput.focus();
+    palette.showModal();
   }
 
   function closePalette() {
-    palette.hidden = true;
+    if (palette.open) palette.close();
   }
 
   document.getElementById('paletteBtn').addEventListener('click', openPalette);
@@ -452,10 +487,38 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      palette.hidden ? openPalette() : closePalette();
-    } else if (e.key === 'Escape' && !palette.hidden) {
-      closePalette();
+      palette.open ? closePalette() : openPalette();
     }
   });
+
+  /* ===== The email link copies itself ===== */
+  const emailLink = document.querySelector('.cell--contact a[href^="mailto:"]');
+  if (emailLink && navigator.clipboard) {
+    emailLink.setAttribute('aria-live', 'polite');
+    emailLink.setAttribute('title', 'Click to copy');
+    let emailRestore = 0;
+    emailLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigator.clipboard.writeText('dbanga@uwaterloo.ca').then(() => {
+        const old = 'dbanga@uwaterloo.ca';
+        emailLink.textContent = 'Copied.';
+        clearTimeout(emailRestore);
+        emailRestore = setTimeout(() => { emailLink.textContent = old; }, 1200);
+      }, () => { location.href = emailLink.href; });
+    });
+  }
+
+  /* ===== A note for the curious ===== */
+  try {
+    console.log(
+      '%c✎ drafted by hand%c\n\nvanilla HTML/CSS/JS — no framework, no build step.\n⌘K has more than it shows. type ink() for a storm.\nsource → https://github.com/DivyamBanga/divyambanga.github.io\nsay hi → dbanga@uwaterloo.ca',
+      'font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 8px; border: 1px solid #8f8f88;',
+      'font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: #8f8f88;'
+    );
+    window.ink = function (n) {
+      if (window.__ink) { window.__ink.storm(n || 16); return 'there it goes.'; }
+      return 'the ink is asleep (WebGL off or reduced motion).';
+    };
+  } catch (e) {}
 
 });
