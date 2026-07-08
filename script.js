@@ -61,6 +61,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  /* The signature in the title block: measured so the pen can trace
+     it. The block is mid-rise when this runs (translated down by its
+     entrance animation), so its current transform is subtracted to
+     get the settled position. */
+  function signaturePlan() {
+    const svg = document.querySelector('.sig');
+    if (!svg || !svg.viewBox) return null;
+    const paths = Array.from(svg.querySelectorAll('path'));
+    if (!paths.length || typeof paths[0].getTotalLength !== 'function') return null;
+    const block = svg.closest('.tblock');
+    let dx = 0, dy = 0;
+    try {
+      const t = getComputedStyle(block).transform;
+      if (t && t !== 'none') { const m = new DOMMatrix(t); dx = m.m41; dy = m.m42; }
+    } catch (e) {}
+    const rect = svg.getBoundingClientRect();
+    const g = grid.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    const sx = rect.width / vb.width;
+    const sy = rect.height / vb.height;
+    const ox = rect.left - dx - g.left;
+    const oy = rect.top - dy - g.top;
+    return {
+      toGrid(p) { return { x: ox + p.x * sx, y: oy + p.y * sy }; },
+      paths: paths.map((path) => ({ path, len: path.getTotalLength() }))
+    };
+  }
+
   const GLYPHS = '#%&/\\<>[]{}=+*~^?!01';
   const introTimers = [];  // pending decode/finish timeouts for this run
   const liveDecodes = [];  // decodes currently animating
@@ -98,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
      any click or key, and can be replayed from the command palette. */
   let drafting = false;
   let penAnim = null;
+  const sigAnims = [];
   let settleTimer = 0;
 
   function scheduleIntroDone(ms) {
@@ -111,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.removeEventListener('keydown', skipIntro, true);
     while (introTimers.length) clearTimeout(introTimers.pop());
     while (liveDecodes.length) liveDecodes.pop().stop();
+    while (sigAnims.length) { try { sigAnims.pop().finish(); } catch (e) {} }
     if (penAnim) { try { penAnim.finish(); } catch (e) {} penAnim = null; }
     // The last cool/rise animations outlast the intro clock; keep the
     // gate class until they settle so nothing pops. Skips settle now.
@@ -241,7 +271,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const tH3 = tH1 + u.h1 + HOP2;
     const tH2 = tH3 + u.h3 + HOP2;
     const tEnd = tH2 + u.h2;
-    const total = tEnd + OUTRO;
+
+    // The last act: the pen glides to the title block and signs the
+    // sheet, stroke by stroke, at a deliberate signing speed.
+    const sig = signaturePlan();
+    const SIG_V = 230;    // signature speed, svg units per second
+    const SIG_GAP = 0.09; // micro pen-lift between strokes
+    const tSig = tEnd + HOP;
+    let tSigEnd = tEnd;
+    if (sig) {
+      tSigEnd = tSig;
+      sig.paths.forEach((p, i) => { tSigEnd += p.len / SIG_V + (i ? SIG_GAP : 0); });
+    }
+    const total = tSigEnd + OUTRO;
 
     // The pen tip: one linear timeline through every corner, so it
     // always sits exactly on the tip of the line being drawn. It goes
@@ -280,9 +322,50 @@ document.addEventListener('DOMContentLoaded', () => {
       at(tH2 - HOP2 * 0.3, -8, geo.y2, 0.5, 0);
       at(tH2, 0, geo.y2);
       at(tEnd, xDiv, geo.y2);
-      at(total, xDiv, geo.y2, 2.4, 0);              // bloom out
+      if (sig) {
+        // Lift, glide to the title block, sign, and bloom out there.
+        at(tEnd + HOP * 0.45, xDiv, geo.y2 - 10, 0.5, 0);
+        const s0 = sig.toGrid(sig.paths[0].path.getPointAtLength(0));
+        at(tSig - HOP * 0.2, s0.x, s0.y - 6, 0.5, 0);
+        let t = tSig;
+        sig.paths.forEach(({ path, len }, i) => {
+          if (i) {
+            const p0 = sig.toGrid(path.getPointAtLength(0));
+            at(t + SIG_GAP * 0.5, p0.x, p0.y - 3, 0.55, 0.3);
+            t += SIG_GAP;
+          }
+          const dur = len / SIG_V;
+          const steps = Math.max(6, Math.ceil(len / 9));
+          for (let s = 0; s <= steps; s++) {
+            const p = sig.toGrid(path.getPointAtLength((len * s) / steps));
+            at(t + (dur * s) / steps, p.x, p.y, 0.8);
+          }
+          t += dur;
+        });
+        const lastP = sig.paths[sig.paths.length - 1];
+        const pEnd = sig.toGrid(lastP.path.getPointAtLength(lastP.len));
+        at(total, pEnd.x + 6, pEnd.y - 5, 2.0, 0);  // bloom out off the flourish
+      } else {
+        at(total, xDiv, geo.y2, 2.4, 0);            // bloom out
+      }
       penAnim = pen.animate(kf, { duration: total * 1000, easing: 'linear', fill: 'forwards' });
       penAnim.finished.then(() => pen.remove()).catch(() => pen.remove());
+    }
+
+    // The signature ink follows the same clock as the pen tip.
+    if (sig) {
+      let t = tSig;
+      sig.paths.forEach(({ path, len }, i) => {
+        if (i) t += SIG_GAP;
+        const dur = len / SIG_V;
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+        sigAnims.push(path.animate(
+          [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+          { duration: dur * 1000, delay: t * 1000, easing: 'linear', fill: 'both' }
+        ));
+        t += dur;
+      });
     }
 
     // Headings decode as the pen encloses their cell.
@@ -377,6 +460,38 @@ document.addEventListener('DOMContentLoaded', () => {
       ghline.hidden = false;
     })
     .catch(() => {});
+
+  /* ===== Title block: live REV date and Waterloo local time ===== */
+  const revEl = document.getElementById('tbRev');
+  if (revEl) {
+    const CK = 'tb-rev';
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CK) || 'null'); } catch (e) {}
+    if (cached && Date.now() - cached.t < 21600000) {
+      revEl.textContent = cached.v;
+    } else {
+      fetch('https://api.github.com/repos/DivyamBanga/divyambanga.github.io')
+        .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then((d) => {
+          const iso = (d.pushed_at || '').slice(0, 10);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+          revEl.textContent = iso;
+          try { localStorage.setItem(CK, JSON.stringify({ t: Date.now(), v: iso })); } catch (e) {}
+        })
+        .catch(() => {}); // the baked date stands
+    }
+  }
+
+  const clockEl = document.getElementById('tbClock');
+  if (clockEl) {
+    const fmt = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit', hour12: false
+    });
+    const tick = () => { clockEl.textContent = fmt.format(new Date()); };
+    tick();
+    setInterval(tick, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+  }
 
   /* ===== Command palette (Cmd/Ctrl+K) ===== */
   const palette = document.getElementById('palette');
