@@ -69,7 +69,7 @@ a {
 a:hover { text-decoration-color: var(--ink); }
 
 :focus-visible {
-  outline: 1.5px solid var(--ink);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -125,8 +125,9 @@ p:last-child { margin-bottom: 0; }
 .cell--off { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; }
 .cell--timeline { flex: 1; overflow: hidden; }
 
-/* One screen on desktop. Phones and tablets scroll like normal pages. */
-@media (min-width: 1024px) and (min-height: 640px) {
+/* One screen on desktop, but only when everything genuinely fits.
+   Shorter laptop viewports scroll instead of clipping content. */
+@media (min-width: 1024px) and (min-height: 740px) {
   body { height: 100dvh; overflow: hidden; }
   .grid, .grid__build { height: 100%; }
 }
@@ -486,7 +487,9 @@ h3 {
   font: inherit;
   color: inherit;
   cursor: pointer;
-  padding: 0;
+  /* Invisible padding grows the hit area to ~24px without moving the text. */
+  padding: 6px 2px;
+  margin: -6px -2px;
   text-decoration: underline;
   text-decoration-color: var(--dim);
   text-underline-offset: 3px;
@@ -559,7 +562,6 @@ h3 {
 
 @media (max-width: 719px) {
   .projgrid { grid-template-columns: 1fr; gap: 14px; }
-  .projstrip { min-height: 0; }
 }
 
 /* ---------- Reduced motion ---------- */

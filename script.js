@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const effectiveTheme = () => root.getAttribute('data-theme') || 'dark';
 
   function setMetaThemeColor() {
-    const m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.content = effectiveTheme() === 'dark' ? '#121211' : '#fafaf8';
+    const c = effectiveTheme() === 'dark' ? '#121211' : '#fafaf8';
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => { m.content = c; });
   }
 
   function updateThemeLabel() {
@@ -66,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const orig = el.textContent;
     const n = orig.length;
     if (!n) return;
+    // Screen readers announce the real text, not the scramble frames.
+    el.setAttribute('aria-label', orig);
     const t0 = performance.now();
     let tail = '';
     let tick = 0;

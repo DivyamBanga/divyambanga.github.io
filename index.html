@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="color-scheme" content="dark light">
   <meta name="format-detection" content="telephone=no">
-  <meta name="theme-color" content="#121211">
+  <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)">
+  <link rel="preconnect" href="https://github-contributions-api.jogruber.de" crossorigin>
+  <link rel="preconnect" href="https://api.github.com" crossorigin>
   <title>Div Banga</title>
   <meta name="description" content="Divyam Banga. Engineering student at Waterloo, software intern at PiinPoint. I build things with AI that people actually use.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -25,7 +28,7 @@
   <link rel="canonical" href="https://divyambanga.github.io/">
   <link rel="icon" type="image/png" href="assets/favicon.png"/>
   <link rel="apple-touch-icon" href="assets/favicon.png">
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=22" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -35,7 +38,9 @@
     "email": "mailto:dbanga@uwaterloo.ca",
     "description": "Engineering student at Waterloo, software intern at PiinPoint.",
     "jobTitle": "Software Engineering Intern",
+    "worksFor": { "@type": "Organization", "name": "PiinPoint", "url": "https://www.piinpoint.com" },
     "alumniOf": "University of Waterloo",
+    "image": "https://divyambanga.github.io/assets/og.png",
     "sameAs": [
       "https://www.linkedin.com/in/divyambanga",
       "https://github.com/DivyamBanga"
@@ -47,7 +52,13 @@
     (function () {
       try {
         var t = localStorage.getItem('theme');
-        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.setAttribute('data-theme', t);
+          // Keep browser chrome in step: a saved theme overrides the OS-scheme metas.
+          var c = t === 'dark' ? '#121211' : '#fafaf8';
+          var metas = document.querySelectorAll('meta[name="theme-color"]');
+          for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -116,19 +127,19 @@
             <p>Interning at <a href="https://www.piinpoint.com" target="_blank" rel="noopener">PiinPoint</a><a class="yc" href="https://www.ycombinator.com/companies/piinpoint" target="_blank" rel="noopener" aria-label="PiinPoint on Y Combinator"></a>.</p>
           </li>
           <li>
-            <time>Jan 2026</time>
+            <time datetime="2026-01">Jan 2026</time>
             <p>Won CxC and HackCanada. First of 95 teams at CxC.</p>
           </li>
           <li>
-            <time>2025</time>
+            <time datetime="2025">2025</time>
             <p>Software developer co-op at a logistics firm. My internal tools saved the team about 15 hours a week.</p>
           </li>
           <li>
-            <time>2024</time>
+            <time datetime="2024">2024</time>
             <p>Won NASA Space Apps and MasseyHacks.</p>
           </li>
           <li>
-            <time>Sep 2024</time>
+            <time datetime="2024-09">Sep 2024</time>
             <p>Started studying engineering at Waterloo.</p>
           </li>
         </ol>
@@ -164,7 +175,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=9"></script>
   <script src="fluid.js?v=5" defer></script>
 </body>
 </html>
