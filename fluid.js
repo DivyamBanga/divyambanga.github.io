@@ -77,7 +77,7 @@
   var CURL = 10;                   // swirl strength
   var SPLAT_RADIUS = 0.0007;       // ink pour width
   var SPLAT_FORCE = 2200;
-  var INK_AMOUNT = 0.085;          // quiet: the ink accents, never competes
+  var INK_AMOUNT = 0.065;          // quiet: the ink accents, never competes
   var IDLE_MS = 6000;              // sleep this long after the last splat
 
   /* ---------- Shaders ---------- */
@@ -288,8 +288,9 @@
     'uniform sampler2D uTexture;',
     'void main () {',
     '  vec3 c = texture2D(uTexture, vUv).rgb;',
-    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.25, 0.0, 0.21);',
-    '  gl_FragColor = vec4(c * 1.05, a);',
+    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.15, 0.0, 0.17);',
+    // Accumulated dye must never blow out to white: cap the color.
+    '  gl_FragColor = vec4(min(c, vec3(0.7)), a);',
     '}'
   ].join('\n'));
 
@@ -435,7 +436,7 @@
     var h = hue * 6;
     var i = Math.floor(h);
     var f = h - i;
-    var v = 1, s = 0.38;
+    var v = 0.85, s = 0.42; // duller, more colored: never reads as white
     var p = v * (1 - s), q = v * (1 - s * f), t = v * (1 - s * (1 - f));
     var rgb = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i % 6];
     return { r: rgb[0] * INK_AMOUNT, g: rgb[1] * INK_AMOUNT, b: rgb[2] * INK_AMOUNT };
