@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     settleTimer = setTimeout(() => grid.classList.remove('is-drafting', 'is-skipped'), wait);
     window.dispatchEvent(new Event('intro:done'));
     initGlow();
+    initXhair();
   }
 
   function skipIntro() {
@@ -161,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (drafting) return;
     clearTimeout(settleTimer);
     if (glowWrap) glowWrap.classList.remove('is-on');
+    if (xhairWrap) xhairWrap.classList.remove('is-on');
     grid.classList.remove('is-drafting', 'is-skipped');
     void grid.offsetWidth; // style flush, so re-adding restarts every animation
     grid.classList.add('is-drafting');
@@ -230,6 +232,81 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(build, 160);
     });
+  }
+
+  /* ===== Drafting crosshair =====
+     A parallel rule for the sheet: hairlines through the pointer, a
+     mono readout of sheet coordinates, and CAD-style snap when the
+     pointer nears a real grid line. Steps aside over words. */
+  let xhairBuilt = false;
+  let xhairWrap = null;
+  function initXhair() {
+    if (xhairBuilt) {
+      if (xhairWrap) requestAnimationFrame(() => xhairWrap.classList.add('is-on'));
+      return;
+    }
+    if (reducedMotion) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches) return;
+    xhairBuilt = true;
+
+    const wrap = document.createElement('div');
+    xhairWrap = wrap;
+    wrap.className = 'xhair';
+    wrap.setAttribute('aria-hidden', 'true');
+    const v = document.createElement('i'); v.className = 'xhair__v';
+    const h = document.createElement('i'); h.className = 'xhair__h';
+    const label = document.createElement('span'); label.className = 'xhair__label';
+    wrap.append(v, h, label);
+    document.body.appendChild(wrap);
+
+    const SNAP = 8;
+    let geo = null;
+    function refreshGeo() {
+      const g = gridGeometry();
+      const L = g.rect.left, T = g.rect.top;
+      geo = {
+        ox: L, oy: T,
+        xs: [L, L + g.xDiv, L + g.W - 1],
+        // horizontal lines snap only along their real extent
+        ys: [
+          { y: T, x0: L, x1: L + g.W },
+          { y: T + g.y1, x0: L, x1: L + g.xDiv },
+          { y: T + g.y2, x0: L, x1: L + g.xDiv },
+          { y: T + g.y3, x0: L + g.xDiv, x1: L + g.W },
+          { y: T + g.H - 1, x0: L, x1: L + g.W }
+        ]
+      };
+    }
+
+    let raf = 0, ex = -100, ey = -100, hidden = false;
+    function update() {
+      raf = 0;
+      if (!geo) refreshGeo();
+      let x = ex, y = ey, sx = false, sy = false;
+      for (const gx of geo.xs) if (Math.abs(ex - gx) < SNAP) { x = gx; sx = true; break; }
+      for (const gy of geo.ys) {
+        if (Math.abs(ey - gy.y) < SNAP && ex > gy.x0 - 24 && ex < gy.x1 + 24) { y = gy.y; sy = true; break; }
+      }
+      v.style.transform = 'translateX(' + x + 'px)';
+      h.style.transform = 'translateY(' + y + 'px)';
+      v.classList.toggle('is-snap', sx);
+      h.classList.toggle('is-snap', sy);
+      label.style.transform = 'translate(' + (x + 11) + 'px,' + (y + 13) + 'px)';
+      label.textContent = 'x ' + Math.round(x - geo.ox) + ' · y ' + Math.round(y - geo.oy);
+    }
+    window.addEventListener('pointermove', (e) => {
+      ex = e.clientX; ey = e.clientY;
+      const t = e.target;
+      const overWords = !!(t && t.closest &&
+        t.closest('p, h1, h2, h3, a, button, li, time, input, textarea, .tblock, dialog'));
+      if (overWords !== hidden) { hidden = overWords; wrap.classList.toggle('is-hidden', hidden); }
+      if (!raf) raf = requestAnimationFrame(update);
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => wrap.classList.remove('is-on'));
+    document.documentElement.addEventListener('pointerenter', () => wrap.classList.add('is-on'));
+    window.addEventListener('resize', () => setTimeout(refreshGeo, 200));
+    palette.addEventListener('close', () => wrap.classList.remove('is-hidden'));
+    requestAnimationFrame(() => wrap.classList.add('is-on'));
   }
 
   function runIntro() {
@@ -514,6 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'GitHub', run: () => window.open('https://github.com/DivyamBanga', '_blank', 'noopener') },
     { label: 'LinkedIn', run: () => window.open('https://www.linkedin.com/in/divyambanga', '_blank', 'noopener') },
     { label: 'Switch appearance', hint: 'light / dark', run: toggleTheme },
+    { label: 'Construction lines', hint: 'G', run: () => toggleBlueprint() },
     { label: 'Spill ink', hint: 'make a mess', hidden: true, match: 'spill ink mess paint storm splash splat',
       run: () => { if (window.__ink) window.__ink.storm(16); } },
     { label: 'Replay the entrance', hint: 'draw it again', hidden: true, match: 'replay redraw entrance intro again draft pen',
@@ -620,6 +698,68 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(emailRestore);
         emailRestore = setTimeout(() => { emailLink.textContent = old; }, 1200);
       }, () => { location.href = emailLink.href; });
+    });
+  }
+
+  /* ===== Construction lines (G) =====
+     The working grid the sheet was drawn on: baseline rows, guides
+     extended past the frame, registration marks, an annotation. */
+  let bp = null;
+  function renderBlueprint() {
+    const g = gridGeometry();
+    const sx = window.scrollX, sy = window.scrollY;
+    const L = g.rect.left + sx, T = g.rect.top + sy;
+    bp.style.height = Math.max(document.documentElement.scrollHeight, window.innerHeight) + 'px';
+    const xs = [L, L + g.xDiv, L + g.W - 1];
+    const ys = [T, T + g.y1, T + g.y2, T + g.y3, T + g.H - 1];
+    const parts = [];
+    xs.forEach((x) => parts.push('<i class="bp__v" style="left:' + x + 'px"></i>'));
+    ys.forEach((y) => parts.push('<i class="bp__h" style="top:' + y + 'px"></i>'));
+    parts.push('<i class="bp__rows" style="left:' + L + 'px;top:' + T + 'px;width:' + g.W + 'px;height:' + g.H + 'px"></i>');
+    [[L, T], [L + g.W, T], [L, T + g.H], [L + g.W, T + g.H]].forEach((c) =>
+      parts.push('<i class="bp__reg" style="left:' + (c[0] - 4.5) + 'px;top:' + (c[1] - 4.5) + 'px"></i>'));
+    parts.push('<span class="bp__annot" style="left:' + L + 'px;top:' + Math.max(4, T - 18) + 'px">SHEET ' +
+      Math.round(g.W) + '×' + Math.round(g.H) + ' · 2 COL · BASELINE 23</span>');
+    bp.innerHTML = parts.join('');
+  }
+  function toggleBlueprint() {
+    if (!bp) {
+      bp = document.createElement('div');
+      bp.className = 'blueprint';
+      bp.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(bp);
+    }
+    if (bp.classList.contains('is-on')) {
+      bp.classList.remove('is-on');
+    } else {
+      renderBlueprint();
+      requestAnimationFrame(() => bp.classList.add('is-on'));
+    }
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'g' && e.key !== 'G') return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (drafting) return; // during the entrance, a key only skips it
+    const t = e.target;
+    if (palette.open || (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA'))) return;
+    toggleBlueprint();
+  });
+  window.addEventListener('resize', () => {
+    if (bp && bp.classList.contains('is-on')) setTimeout(renderBlueprint, 200);
+  });
+
+  /* ===== Redline dimensions on the project cards ===== */
+  if (window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches) {
+    document.querySelectorAll('.proj').forEach((card) => {
+      const tag = document.createElement('span');
+      tag.className = 'proj__dim';
+      tag.setAttribute('aria-hidden', 'true');
+      card.appendChild(tag);
+      const measure = () => {
+        tag.textContent = Math.round(card.offsetWidth) + ' × ' + Math.round(card.offsetHeight);
+      };
+      card.addEventListener('mouseenter', measure);
+      measure();
     });
   }
 

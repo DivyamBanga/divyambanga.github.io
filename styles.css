@@ -102,6 +102,7 @@ p:last-child { margin-bottom: 0; }
   max-width: 1100px;
   margin: auto;
   position: relative;
+  z-index: 1; /* content rides above the instrument layers (crosshair, construction lines) */
 }
 .grid__build {
   border: 1px solid var(--line);
@@ -347,6 +348,114 @@ p:last-child { margin-bottom: 0; }
   background: radial-gradient(
     circle 130px at calc(var(--mx, -9999px) - var(--ox, 0px)) calc(var(--my, -9999px) - var(--oy, 0px)),
     var(--line-glow), transparent 78%);
+}
+
+/* ---------- Drafting crosshair ----------
+   Two faint hairlines track the pointer like a parallel rule on a
+   drafting table, with a small mono readout of sheet coordinates.
+   Near a real grid line they snap to it, like CAD object snap. The
+   whole instrument sits under the content and steps aside (fades)
+   whenever the pointer is over words or controls. */
+.xhair {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.xhair.is-on:not(.is-hidden) { opacity: 1; }
+.xhair__v, .xhair__h { position: fixed; background: var(--ink); opacity: 0.07; }
+.xhair__v { top: 0; bottom: 0; left: 0; width: 1px; }
+.xhair__h { left: 0; right: 0; top: 0; height: 1px; }
+.xhair__v.is-snap, .xhair__h.is-snap { opacity: 0.18; }
+.xhair__label {
+  position: fixed;
+  top: 0; left: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* ---------- Construction lines (press G) ----------
+   The sheet's working grid: baseline rows, guides extended off the
+   frame, corner registration marks, and a small annotation. */
+.blueprint {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.blueprint.is-on { opacity: 1; }
+.bp__v { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ink); opacity: 0.05; }
+.bp__h { position: absolute; left: 0; right: 0; height: 1px; background: var(--ink); opacity: 0.05; }
+.bp__rows {
+  position: absolute;
+  background: repeating-linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 23px);
+  opacity: 0.04;
+}
+.bp__reg { position: absolute; width: 9px; height: 9px; border: 1px solid var(--ink); border-radius: 50%; opacity: 0.4; }
+.bp__reg::before, .bp__reg::after { content: ""; position: absolute; background: var(--ink); }
+.bp__reg::before { left: -5px; right: -5px; top: 3.5px; height: 1px; }
+.bp__reg::after { top: -5px; bottom: -5px; left: 3.5px; width: 1px; }
+.bp__annot {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+/* ---------- Redline dimensions ----------
+   Hovering a project annotates it like a shop drawing: extension
+   lines with tick caps and the card's real measurements. */
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+  .proj { position: relative; }
+  .proj::before, .proj::after {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.18s ease-out, opacity 0.14s ease-out;
+  }
+  .proj::before { /* width line below the card, tick caps at the ends */
+    left: 0; right: 0; bottom: -13px; height: 5px;
+    background:
+      linear-gradient(var(--dim), var(--dim)) left center / 1px 5px no-repeat,
+      linear-gradient(var(--dim), var(--dim)) right center / 1px 5px no-repeat,
+      linear-gradient(var(--dim), var(--dim)) center center / 100% 1px no-repeat;
+    transform: scaleX(0.55);
+    transform-origin: left center;
+  }
+  .proj::after { /* height line beside the card */
+    top: 0; bottom: 0; left: -13px; width: 5px;
+    background:
+      linear-gradient(var(--dim), var(--dim)) center top / 5px 1px no-repeat,
+      linear-gradient(var(--dim), var(--dim)) center bottom / 5px 1px no-repeat,
+      linear-gradient(var(--dim), var(--dim)) center center / 1px 100% no-repeat;
+    transform: scaleY(0.55);
+    transform-origin: center top;
+  }
+  .proj:hover::before, .proj:hover::after { opacity: 0.7; transform: none; }
+  .proj__dim {
+    position: absolute;
+    left: 50%;
+    bottom: -25px;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+    opacity: 0;
+    transition: opacity 0.14s ease-out;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .proj:hover .proj__dim { opacity: 1; }
 }
 
 /* ---------- Type ---------- */
