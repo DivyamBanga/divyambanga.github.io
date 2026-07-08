@@ -804,6 +804,54 @@ dialog.palette::backdrop { background: transparent; }
   .projgrid { grid-template-columns: 1fr; gap: 14px; }
 }
 
+/* ---------- Print: the sheet becomes paper ----------
+   ⌘P is an easter egg that works: canvases, instruments and
+   controls vanish, ink sits on paper, link destinations become
+   visible, and the title block prints with real borders. */
+@media print {
+  :root {
+    --bg: #fff;
+    --ink: #111;
+    --dim: #555;
+    --line: #ddd;
+  }
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  body { padding: 0; font-size: 12px; }
+  #paint, .glowlines, .xhair, .blueprint, .pen, dialog,
+  .cell--contact .small, .proj__dim { display: none !important; }
+  .rotator { transition: none; }
+  a { color: var(--ink); }
+  .proj__link[href^="http"]::after,
+  .also a[href^="http"]::after,
+  .cell--contact a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9px;
+    color: var(--dim);
+    word-break: break-all;
+    text-decoration: none;
+  }
+  /* hairlines that rely on painted backgrounds become real borders */
+  .tblock, .tblock__row { background: none !important; gap: 0; }
+  .tblock { border: 1px solid #bbb; max-width: 340px; page-break-inside: avoid; }
+  .tblock__cell { background: none !important; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .tblock__cell:last-child { border-right: none; }
+  .tblock__row:last-child .tblock__cell { border-bottom: none; }
+  .tl::before { background: none; border-left: 1px solid var(--line); width: 0; }
+  .tl li::before { background: none; border: 2px solid var(--ink); width: 3px; height: 3px; }
+  .tl__now::before { border-width: 1.5px; }
+  .cell { page-break-inside: avoid; }
+  .cell--contact::after {
+    content: "Drafted by hand — divyambanga.github.io";
+    display: block;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+  }
+}
+@page { margin: 14mm; }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   * {
