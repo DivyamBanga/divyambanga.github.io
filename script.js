@@ -62,8 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const GLYPHS = '#%&/\\<>[]{}=+*~^?!01';
+  const introTimers = [];  // pending decode/finish timeouts for this run
+  const liveDecodes = [];  // decodes currently animating
   function decode(el, dur) {
-    const orig = el.textContent;
+    const orig = el.getAttribute('aria-label') || el.textContent;
     const n = orig.length;
     if (!n) return;
     // Screen readers announce the real text, not the scramble frames.
@@ -71,7 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const t0 = performance.now();
     let tail = '';
     let tick = 0;
+    const handle = { done: false, stop() { handle.done = true; el.textContent = orig; } };
+    liveDecodes.push(handle);
     (function step() {
+      if (handle.done) return;
       const p = Math.min(1, (performance.now() - t0) / dur);
       const keep = Math.floor(p * n);
       if (tick++ % 2 === 0 || tail.length !== n - keep) {
@@ -81,30 +86,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       el.textContent = p < 1 ? orig.slice(0, keep) + tail : orig;
-      if (p < 1) requestAnimationFrame(step);
+      if (p < 1) requestAnimationFrame(step); else handle.done = true;
     })();
   }
   function decodeAt(el, atMs) {
     if (!el) return;
-    setTimeout(() => decode(el, 380 + el.textContent.length * 22), atMs);
+    introTimers.push(setTimeout(() => decode(el, 380 + el.textContent.length * 22), atMs));
   }
 
-  function introDone(ms) {
-    setTimeout(() => {
-      window.dispatchEvent(new Event('intro:done'));
-      initGlow();
-    }, ms);
+  /* Lifecycle: the entrance finishes on schedule, can be skipped by
+     any click or key, and can be replayed from the command palette. */
+  let drafting = false;
+  let penAnim = null;
+  let settleTimer = 0;
+
+  function scheduleIntroDone(ms) {
+    introTimers.push(setTimeout(finishIntro, ms));
+  }
+
+  function finishIntro() {
+    if (!drafting) return;
+    drafting = false;
+    window.removeEventListener('pointerdown', skipIntro, true);
+    window.removeEventListener('keydown', skipIntro, true);
+    while (introTimers.length) clearTimeout(introTimers.pop());
+    while (liveDecodes.length) liveDecodes.pop().stop();
+    if (penAnim) { try { penAnim.finish(); } catch (e) {} penAnim = null; }
+    // The last cool/rise animations outlast the intro clock; keep the
+    // gate class until they settle so nothing pops. Skips settle now.
+    const wait = grid.classList.contains('is-skipped') ? 30 : 1400;
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => grid.classList.remove('is-drafting', 'is-skipped'), wait);
+    window.dispatchEvent(new Event('intro:done'));
+    initGlow();
+  }
+
+  function skipIntro() {
+    if (!drafting) return;
+    grid.classList.add('is-skipped');
+    finishIntro();
+  }
+
+  function replayIntro() {
+    if (drafting) return;
+    clearTimeout(settleTimer);
+    if (glowWrap) glowWrap.classList.remove('is-on');
+    grid.classList.remove('is-drafting', 'is-skipped');
+    void grid.offsetWidth; // style flush, so re-adding restarts every animation
+    grid.classList.add('is-drafting');
+    runIntro();
   }
 
   /* ===== Hairline glow =====
      After the entrance, the grid stays quietly alive: strips laid over
      every hairline carry a radial highlight that follows the cursor. */
   let glowBuilt = false;
+  let glowWrap = null;
   function initGlow() {
-    if (glowBuilt || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (glowBuilt) {
+      // Rebuilt intro (replay): just bring the glow back.
+      if (glowWrap) requestAnimationFrame(() => glowWrap.classList.add('is-on'));
+      return;
+    }
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     glowBuilt = true;
 
     const wrap = document.createElement('div');
+    glowWrap = wrap;
     wrap.className = 'glowlines';
     wrap.setAttribute('aria-hidden', 'true');
     grid.appendChild(wrap);
@@ -154,16 +202,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  (function intro() {
+  function runIntro() {
+    drafting = true;
+    window.addEventListener('pointerdown', skipIntro, true);
+    window.addEventListener('keydown', skipIntro, true);
     const heroH1 = document.querySelector('.cell--hero h1');
-    if (reducedMotion) { introDone(300); return; }
+    if (reducedMotion) { scheduleIntroDone(300); return; }
 
     if (!window.matchMedia('(min-width: 1024px)').matches) {
-      // Phones keep the plain fade, plus a light decode pass on top.
+      // Phones draw their own compact entrance; decodes ride along.
       decodeAt(heroH1, 250);
       document.querySelectorAll('.cell h2').forEach((el) => decodeAt(el, 450));
       document.querySelectorAll('.proj h3').forEach((el, i) => decodeAt(el, 600 + i * 90));
-      introDone(1400);
+      scheduleIntroDone(1400);
       return;
     }
 
@@ -230,8 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
       at(tH2, 0, geo.y2);
       at(tEnd, xDiv, geo.y2);
       at(total, xDiv, geo.y2, 2.4, 0);              // bloom out
-      const anim = pen.animate(kf, { duration: total * 1000, easing: 'linear', fill: 'forwards' });
-      anim.finished.then(() => pen.remove()).catch(() => pen.remove());
+      penAnim = pen.animate(kf, { duration: total * 1000, easing: 'linear', fill: 'forwards' });
+      penAnim.finished.then(() => pen.remove()).catch(() => pen.remove());
     }
 
     // Headings decode as the pen encloses their cell.
@@ -244,8 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
     decodeAt(document.querySelector('.cell--contact h2'), (tH3 + u.h3 * 0.6) * S);
     decodeAt(document.querySelector('.cell--off h2'), (tH2 + u.h2 * 0.7) * S);
 
-    introDone((total + 0.15) * 1000);
-  })();
+    scheduleIntroDone((total + 0.15) * 1000);
+  }
+  runIntro();
 
   /* ===== Rotating word (per-letter cascade) ===== */
   const rotator = document.getElementById('rotator');

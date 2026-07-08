@@ -203,28 +203,38 @@ p:last-child { margin-bottom: 0; }
     background: var(--line);
   }
 
-  /* The frame, one unbroken stroke around the page. */
+  /* The frame, one unbroken stroke around the page. The animations
+     live under .is-drafting so the whole entrance can be skipped and
+     replayed; the lines themselves are permanent. */
   .grid::before { /* top, left to right */
     top: 0; left: 0; right: 0; height: 1px;
     transform-origin: left center;
+  }
+  .grid.is-drafting::before {
     animation: draw-x var(--u-top) linear var(--t-top) backwards,
                cool 0.9s linear calc(var(--t-top) + var(--u-top)) backwards;
   }
   .grid::after { /* right, downward */
     top: 0; right: 0; bottom: 0; width: 1px;
     transform-origin: center top;
+  }
+  .grid.is-drafting::after {
     animation: draw-y var(--u-right) linear var(--t-right) backwards,
                cool 0.9s linear calc(var(--t-right) + var(--u-right)) backwards;
   }
   .grid__build::before { /* bottom, right to left */
     left: -1px; right: -1px; bottom: -1px; height: 1px;
     transform-origin: right center;
+  }
+  .grid.is-drafting .grid__build::before {
     animation: draw-x var(--u-bottom) linear var(--t-bottom) backwards,
                cool 0.9s linear calc(var(--t-bottom) + var(--u-bottom)) backwards;
   }
   .grid__build::after { /* left, upward, closing the frame */
     left: -1px; top: -1px; bottom: -1px; width: 1px;
     transform-origin: center bottom;
+  }
+  .grid.is-drafting .grid__build::after {
     animation: draw-y var(--u-left) linear var(--t-left) backwards,
                cool 0.9s linear calc(var(--t-left) + var(--u-left)) backwards;
   }
@@ -233,6 +243,8 @@ p:last-child { margin-bottom: 0; }
   .col--right::before { /* column divider, downward */
     top: 0; bottom: 0; left: -1px; width: 1px;
     transform-origin: center top;
+  }
+  .grid.is-drafting .col--right::before {
     animation: draw-y var(--u-vdiv) linear var(--t-vdiv) backwards,
                cool 0.9s linear calc(var(--t-vdiv) + var(--u-vdiv)) backwards;
   }
@@ -240,15 +252,15 @@ p:last-child { margin-bottom: 0; }
     top: -1px; left: 0; right: 0; height: 1px;
     transform-origin: left center;
   }
-  .cell--projects::before {
+  .grid.is-drafting .cell--projects::before {
     animation: draw-x var(--u-h1) linear var(--t-h1) backwards,
                cool 0.9s linear calc(var(--t-h1) + var(--u-h1)) backwards;
   }
-  .cell--contact::before {
+  .grid.is-drafting .cell--contact::before {
     animation: draw-x var(--u-h3) linear var(--t-h3) backwards,
                cool 0.9s linear calc(var(--t-h3) + var(--u-h3)) backwards;
   }
-  .cell--off::before {
+  .grid.is-drafting .cell--off::before {
     animation: draw-x var(--u-h2) linear var(--t-h2) backwards,
                cool 0.9s linear calc(var(--t-h2) + var(--u-h2)) backwards;
   }
@@ -256,10 +268,12 @@ p:last-child { margin-bottom: 0; }
   /* Content rises and sharpens as its cell is enclosed, staggered
      child by child. Headings also decode in script.js on this clock.
      Project cards and timeline entries get their own cascade. */
-  .cell > *, .proj, .tl li {
+  .grid.is-drafting .cell > *,
+  .grid.is-drafting .proj,
+  .grid.is-drafting .tl li {
     animation: rise 0.85s var(--ease-soft) calc(var(--tc, 0s) + var(--stag, 0s)) backwards;
   }
-  .projgrid, .tl { animation: none; }
+  .grid.is-drafting .projgrid, .grid.is-drafting .tl { animation: none; }
   .cell--hero { --tc: var(--t-hero); }
   .cell--timeline { --tc: var(--t-tl); }
   .cell--projects { --tc: var(--t-proj); }
@@ -276,7 +290,7 @@ p:last-child { margin-bottom: 0; }
   .tl li:nth-child(3) { --stag: 0.28s; }
   .tl li:nth-child(4) { --stag: 0.37s; }
   .tl li:nth-child(5) { --stag: 0.46s; }
-  .cell--timeline .tl::before { /* the timeline's own spine draws down too */
+  .grid.is-drafting .cell--timeline .tl::before { /* the timeline's own spine draws down too */
     transform-origin: center top;
     animation: draw-y 0.6s var(--ease-soft) calc(var(--t-tl) + 0.1s) backwards;
   }
@@ -286,6 +300,18 @@ p:last-child { margin-bottom: 0; }
 @keyframes cool { from { background-color: var(--line-hot); } }
 @keyframes rise {
   from { opacity: 0; transform: translateY(12px); filter: blur(3px); }
+}
+
+/* Any click or key during the entrance skips to the finished page:
+   every entrance animation collapses to its end state in a frame. */
+.grid.is-skipped,
+.grid.is-skipped::before,
+.grid.is-skipped::after,
+.grid.is-skipped *,
+.grid.is-skipped *::before,
+.grid.is-skipped *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
 }
 
 /* ---------- Pen tip (created by script.js during the entrance) ---------- */
@@ -554,7 +580,8 @@ h3 {
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1023px) {
-  .grid__build { flex-direction: column; animation: grid-fade 0.9s var(--ease-soft) backwards; }
+  .grid__build { flex-direction: column; }
+  .grid.is-drafting .grid__build { animation: grid-fade 0.9s var(--ease-soft) backwards; }
   .col--right { border-left: none; border-top: 1px solid var(--line); }
   .cell { flex: none; }
 }
