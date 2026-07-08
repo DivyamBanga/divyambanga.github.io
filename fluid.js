@@ -3,15 +3,22 @@
    confinement). Moving the cursor injects dye and velocity, so
    color pours out of the pointer, swirls with your motion,
    spreads and slowly dissolves. Runs on a pointer-transparent
-   canvas above the page at low alpha. Skipped on touch screens,
-   without WebGL, and when reduced motion is on. */
+   canvas above the page at low alpha.
+
+   Two temperaments: fine pointers get the rainbow trail that
+   follows the cursor; touch screens get deliberate monochrome
+   ink — a tap drops a blot, a drag paints while the finger is
+   down — at lower resolution. The loop sleeps whenever the ink
+   has fully dissolved or the tab is hidden, and wakes on the
+   next movement. Skipped without WebGL and under reduced motion. */
 (function () {
   'use strict';
 
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var touchMode = !fine;
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canvas = document.getElementById('paint');
-  if (!canvas || !fine || reduced) return;
+  if (!canvas || reduced) return;
 
   var attrs = { alpha: true, depth: false, stencil: false, antialias: false, premultipliedAlpha: false };
   var gl = canvas.getContext('webgl2', attrs);
@@ -61,16 +68,17 @@
   if (!formatRGBA) return;
 
   /* ---------- Config ---------- */
-  var SIM_RESOLUTION = 96;
-  var DYE_RESOLUTION = 512;
+  var SIM_RESOLUTION = touchMode ? 64 : 96;
+  var DYE_RESOLUTION = touchMode ? 384 : 512;
   var DENSITY_DISSIPATION = 2.4;   // how fast ink fades
   var VELOCITY_DISSIPATION = 0.9;  // how fast motion calms down
   var PRESSURE = 0.8;
-  var PRESSURE_ITERATIONS = 18;
+  var PRESSURE_ITERATIONS = touchMode ? 12 : 18;
   var CURL = 10;                   // swirl strength
   var SPLAT_RADIUS = 0.0007;       // ink pour width
   var SPLAT_FORCE = 2200;
   var INK_AMOUNT = 0.17;
+  var IDLE_MS = 6000;              // sleep this long after the last splat
 
   /* ---------- Shaders ---------- */
   function compile(type, source) {
@@ -261,7 +269,20 @@
     '}'
   ].join('\n'));
 
-  var displayProgram = program(baseVertex, [
+  /* Touch mode renders the dye as a single ink: the field stores an
+     amount, the theme's ink color is applied at display time, so the
+     blots are off-white smoke on dark and near-black ink on light. */
+  var displayProgram = program(baseVertex, touchMode ? [
+    'precision highp float;',
+    'varying vec2 vUv;',
+    'uniform sampler2D uTexture;',
+    'uniform vec3 uInk;',
+    'void main () {',
+    '  float d = texture2D(uTexture, vUv).r;',
+    '  float a = clamp(d * 1.6, 0.0, 0.4);',
+    '  gl_FragColor = vec4(uInk, a);',
+    '}'
+  ].join('\n') : [
     'precision highp float;',
     'varying vec2 vUv;',
     'uniform sampler2D uTexture;',
@@ -271,6 +292,26 @@
     '  gl_FragColor = vec4(c * 1.15, a);',
     '}'
   ].join('\n'));
+
+  /* The theme's ink color, kept current across theme switches. */
+  var inkRGB = [0.92, 0.92, 0.91];
+  function readInk() {
+    var hex = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+    var m = /^#([0-9a-f]{6})$/i.exec(hex);
+    if (m) {
+      inkRGB = [
+        parseInt(m[1].slice(0, 2), 16) / 255,
+        parseInt(m[1].slice(2, 4), 16) / 255,
+        parseInt(m[1].slice(4, 6), 16) / 255
+      ];
+    }
+  }
+  if (touchMode) {
+    readInk();
+    new MutationObserver(readInk).observe(document.documentElement, {
+      attributes: true, attributeFilter: ['data-theme']
+    });
+  }
 
   /* ---------- Fullscreen quad ---------- */
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -352,15 +393,26 @@
     pressure = createDoubleFBO(simRes.width, simRes.height, formatR, gl.NEAREST);
   }
 
+  /* On phones the URL bar collapse jitters innerHeight on every
+     scroll; resizing would wipe the ink each time. So touch sizes
+     the canvas once to the tallest the viewport can get, and all
+     pointer math uses the canvas's own CSS size. */
+  var cssW = window.innerWidth;
+  var cssH = window.innerHeight;
   function resizeCanvas() {
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var dpr = Math.min(window.devicePixelRatio || 1, touchMode ? 1.25 : 1.5);
+    var targetCssH = touchMode
+      ? Math.max(window.innerHeight, window.screen && window.screen.height || 0)
+      : window.innerHeight;
     var w = Math.round(window.innerWidth * dpr);
-    var h = Math.round(window.innerHeight * dpr);
+    var h = Math.round(targetCssH * dpr);
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
+      cssW = window.innerWidth;
+      cssH = targetCssH;
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = cssH + 'px';
       return true;
     }
     return false;
@@ -374,6 +426,11 @@
   var hue = Math.random();
 
   function inkColor() {
+    if (touchMode) {
+      // Monochrome: the field stores an ink amount, not a color.
+      var A = 0.13 + Math.random() * 0.05;
+      return { r: A, g: A, b: A };
+    }
     hue = (hue + 0.018) % 1;
     var h = hue * 6;
     var i = Math.floor(h);
@@ -384,13 +441,63 @@
     return { r: rgb[0] * INK_AMOUNT, g: rgb[1] * INK_AMOUNT, b: rgb[2] * INK_AMOUNT };
   }
 
-  window.addEventListener('pointermove', function (e) {
-    pointer = {
-      x: e.clientX / window.innerWidth,
-      y: 1 - e.clientY / window.innerHeight
-    };
-    if (!prevPos) prevPos = pointer;
-  }, { passive: true });
+  function toUV(e) {
+    return { x: e.clientX / cssW, y: 1 - e.clientY / cssH };
+  }
+
+  /* Ink stays out of the way of real interactions. */
+  function overInteractive(e) {
+    return !!(e.target && e.target.closest &&
+      e.target.closest('a, button, input, textarea, select, dialog, .palette'));
+  }
+
+  /* A blot: a handful of splats bursting outward from one point.
+     Fired on click (a small drop) and tap (a fuller bloom). */
+  function blot(uv, strength) {
+    for (var i = 0; i < 5; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var k = 320 * strength * (0.4 + Math.random() * 0.6);
+      var c = inkColor();
+      splat({
+        x: uv.x + (Math.random() - 0.5) * 0.012,
+        y: uv.y + (Math.random() - 0.5) * 0.012,
+        dx: Math.cos(a) * k,
+        dy: Math.sin(a) * k,
+        color: { r: c.r * 2.2, g: c.g * 2.2, b: c.b * 2.2 },
+        radius: SPLAT_RADIUS * (touchMode ? 4 : 2.6)
+      });
+    }
+  }
+
+  if (touchMode) {
+    // Paint only while a finger is down; taps drop a blot.
+    window.addEventListener('pointerdown', function (e) {
+      if (!e.isPrimary || overInteractive(e)) return;
+      wake();
+      pointer = prevPos = toUV(e);
+      blot(pointer, 1);
+    }, { passive: true });
+    window.addEventListener('pointermove', function (e) {
+      if (!e.isPrimary || !prevPos) return;
+      pointer = toUV(e);
+      wake();
+    }, { passive: true });
+    var lift = function () { pointer = null; prevPos = null; };
+    window.addEventListener('pointerup', lift, { passive: true });
+    window.addEventListener('pointercancel', lift, { passive: true });
+  } else {
+    window.addEventListener('pointermove', function (e) {
+      pointer = toUV(e);
+      if (!prevPos) prevPos = pointer;
+      wake();
+    }, { passive: true });
+    // A click presses a small drop of ink out of the pen.
+    window.addEventListener('pointerdown', function (e) {
+      if (overInteractive(e)) return;
+      wake();
+      blot(toUV(e), 0.7);
+    }, { passive: true });
+  }
 
   /* Paint a continuous stroke from wherever we painted last, right up
      to the current cursor position, every frame. The stroke head is
@@ -417,12 +524,13 @@
   }
 
   function splat(s) {
+    lastActivity = performance.now();
     splatProgram.bind();
     gl.uniform1i(splatProgram.u.uTarget, velocity.read.attach(0));
     gl.uniform1f(splatProgram.u.aspectRatio, canvas.width / canvas.height);
     gl.uniform2f(splatProgram.u.point, s.x, s.y);
     gl.uniform3f(splatProgram.u.color, s.dx, s.dy, 0);
-    gl.uniform1f(splatProgram.u.radius, SPLAT_RADIUS);
+    gl.uniform1f(splatProgram.u.radius, s.radius || SPLAT_RADIUS);
     blit(velocity.write);
     velocity.swap();
 
@@ -439,6 +547,7 @@
      Skipped if the visitor has already painted. */
   window.addEventListener('intro:done', function () {
     if (strokeDist > 0.12) return;
+    wake();
     var t0 = performance.now();
     var DUR = 1500;
     var prev = null;
@@ -537,21 +646,62 @@
     gl.disable(gl.BLEND);
     displayProgram.bind();
     gl.uniform2f(displayProgram.u.texelSize, 1 / gl.drawingBufferWidth, 1 / gl.drawingBufferHeight);
+    if (touchMode) gl.uniform3f(displayProgram.u.uInk, inkRGB[0], inkRGB[1], inkRGB[2]);
     gl.uniform1i(displayProgram.u.uTexture, dye.read.attach(0));
     blit(null);
   }
 
+  /* ---------- Loop, with a conscience ----------
+     Runs only while there is ink to move: IDLE_MS after the last
+     splat everything has dissolved below visibility, so the loop
+     stops scheduling itself. Movement, taps, the wisp or the ink
+     API wake it back up. Hidden tabs stop immediately. */
   var lastTime = performance.now();
-  (function frame() {
+  var lastActivity = performance.now();
+  var running = false;
+
+  function frame() {
     var now = performance.now();
+    if (document.hidden || now - lastActivity > IDLE_MS) { running = false; return; }
     var dt = Math.min((now - lastTime) / 1000, 0.0333);
     lastTime = now;
     if (resizeCanvas()) initFramebuffers();
-    if (!document.hidden) {
-      paintToPointer();
-      step(dt);
-      render();
-    }
+    paintToPointer();
+    step(dt);
+    render();
     requestAnimationFrame(frame);
-  })();
+  }
+
+  function wake() {
+    lastActivity = performance.now();
+    if (running || document.hidden) return;
+    running = true;
+    lastTime = performance.now();
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) wake();
+  });
+  window.addEventListener('resize', function () { wake(); }, { passive: true });
+
+  /* Small hooks for the rest of the site (palette verbs, console). */
+  window.__ink = {
+    wake: wake,
+    burst: function (clientX, clientY, strength) {
+      wake();
+      blot({ x: clientX / cssW, y: 1 - clientY / cssH }, strength || 1);
+    },
+    storm: function (n) {
+      n = Math.min(n || 12, 40);
+      var i = 0;
+      (function next() {
+        wake();
+        blot({ x: 0.08 + Math.random() * 0.84, y: 0.12 + Math.random() * 0.76 }, 1.4);
+        if (++i < n) setTimeout(next, 60 + Math.random() * 90);
+      })();
+    }
+  };
+
+  wake();
 })();
