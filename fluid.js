@@ -77,7 +77,7 @@
   var CURL = 10;                   // swirl strength
   var SPLAT_RADIUS = 0.0007;       // ink pour width
   var SPLAT_FORCE = 2200;
-  var INK_AMOUNT = 0.11;           // quiet: the ink accents, never competes
+  var INK_AMOUNT = 0.085;          // quiet: the ink accents, never competes
   var IDLE_MS = 6000;              // sleep this long after the last splat
 
   /* ---------- Shaders ---------- */
@@ -288,7 +288,7 @@
     'uniform sampler2D uTexture;',
     'void main () {',
     '  vec3 c = texture2D(uTexture, vUv).rgb;',
-    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.35, 0.0, 0.26);',
+    '  float a = clamp(max(c.r, max(c.g, c.b)) * 1.25, 0.0, 0.21);',
     '  gl_FragColor = vec4(c * 1.05, a);',
     '}'
   ].join('\n'));
