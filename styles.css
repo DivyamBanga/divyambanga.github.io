@@ -53,7 +53,9 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
   display: flex;
-  padding: clamp(16px, 4vw, 44px);
+  /* Height-aware: full on roomy screens, shrinks as the viewport gets
+     short so the sheet keeps fitting one screen. */
+  padding: clamp(16px, min(4vw, 5vh), 44px);
 }
 
 [hidden] { display: none !important; }
@@ -127,9 +129,12 @@ p:last-child { margin-bottom: 0; }
 .cell--off { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; }
 .cell--timeline { flex: 1; overflow: hidden; }
 
-/* One screen on desktop, but only when everything genuinely fits.
-   Shorter laptop viewports scroll instead of clipping content. */
-@media (min-width: 1024px) and (min-height: 780px) {
+/* One screen on desktop. The spacing above is height-aware, so the
+   sheet compresses to fit every common laptop (>=1280px wide covers
+   1366, 1440, 1536, and 1080p at 150% = 1280) down to ~620px tall.
+   Narrower or shorter windows simply scroll, so content is never
+   clipped. */
+@media (min-width: 1280px) and (min-height: 620px) {
   body { height: 100dvh; overflow: hidden; }
   .grid, .grid__build { height: 100%; }
 }
@@ -672,11 +677,26 @@ h3 {
   88% { opacity: 1; }
   to { left: calc(100% - 1px); opacity: 0; }
 }
-/* Tight one-screen heights: the location strip yields first. */
-@media (min-width: 1024px) and (min-height: 780px) and (max-height: 810px) {
+/* Short desktop heights: the drafting block sheds its softest parts
+   first so the sheet still fits one screen. The location strip yields,
+   then the timeline and the block's own margins tighten. */
+@media (min-width: 1024px) and (max-height: 820px) {
   .tblock__row--loc { display: none; }
-  .tl li { padding: 0 0 clamp(7px, 1.2vh, 12px) 22px; }
+  .tl li { padding: 0 0 clamp(6px, 1.1vh, 12px) 22px; }
   .tl li:last-child { padding-bottom: 0; }
+  .tblock { margin-top: clamp(6px, 1.1vh, 12px); }
+}
+/* Shorter still: the block folds to just its signed row, and the
+   whole right column draws its spacing in tight so the timeline,
+   the signature and the contact lines all keep one screen. */
+@media (min-width: 1024px) and (max-height: 760px) {
+  .tblock__row--top { display: none; }
+  .tblock__cell { padding: 4px 10px 5px; }
+  .cell { padding: clamp(12px, min(2.4vw, 2.7vh), 30px); }
+  .cell--timeline h2, .cell--contact h2 { margin-bottom: 6px; }
+  .tl li { padding: 0 0 clamp(4px, 0.9vh, 10px) 22px; }
+  .tl li:last-child { padding-bottom: 0; }
+  .cell--contact p { margin-bottom: 5px; }
 }
 
 /* ---------- YC badge ----------
