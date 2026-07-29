@@ -584,7 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const commands = [
     { label: 'Cortex', hint: 'won CxC', run: () => openRepo('https://github.com/Vibhor7-7/Cortex-CxC') },
     { label: 'Lucid', hint: 'won HackCanada', run: () => openRepo('https://github.com/DivyamBanga/Lucid') },
-    { label: 'myFarm', hint: 'won NASA Space Apps', run: () => openRepo('https://github.com/Doomsy1/NASA') },
+    { label: 'myFarm', hint: 'won NASA Space Apps', run: () => openRepo('https://github.com/ariobarin/NASA') },
+    { label: 'GeoAgent', hint: 'location intelligence agents', run: () => openRepo('https://github.com/DivyamBanga/GeoAgent') },
+    { label: 'Mesh', hint: 'pair programming for AI', run: () => openRepo('https://github.com/DivyamBanga/Mesh') },
     { label: 'Copy email', hint: 'dbanga@uwaterloo.ca', run: copyEmail },
     { label: 'Email me', run: () => { location.href = 'mailto:dbanga@uwaterloo.ca'; } },
     { label: 'Resume', hint: 'PDF', run: () => window.open('assets/DivyamResumeSv.pdf', '_blank', 'noopener') },
