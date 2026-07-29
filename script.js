@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
      only when someone types for them. Word travels. */
   const commands = [
     { label: 'Cortex', hint: 'won CxC', run: () => openRepo('https://github.com/Vibhor7-7/Cortex-CxC') },
-    { label: 'Lucid', hint: 'HackCanada finalist', run: () => openRepo('https://github.com/DivyamBanga/Lucid') },
+    { label: 'Lucid', hint: 'won HackCanada', run: () => openRepo('https://github.com/DivyamBanga/Lucid') },
     { label: 'myFarm', hint: 'won NASA Space Apps', run: () => openRepo('https://github.com/Doomsy1/NASA') },
     { label: 'Copy email', hint: 'dbanga@uwaterloo.ca', run: copyEmail },
     { label: 'Email me', run: () => { location.href = 'mailto:dbanga@uwaterloo.ca'; } },
