@@ -149,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     settleTimer = setTimeout(() => grid.classList.remove('is-drafting', 'is-skipped'), wait);
     window.dispatchEvent(new Event('intro:done'));
     initGlow();
-    initXhair();
   }
 
   function skipIntro() {
@@ -162,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (drafting) return;
     clearTimeout(settleTimer);
     if (glowWrap) glowWrap.classList.remove('is-on');
-    if (xhairWrap) xhairWrap.classList.remove('is-on');
     grid.classList.remove('is-drafting', 'is-skipped');
     void grid.offsetWidth; // style flush, so re-adding restarts every animation
     grid.classList.add('is-drafting');
@@ -232,81 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(build, 160);
     });
-  }
-
-  /* ===== Drafting crosshair =====
-     A parallel rule for the sheet: hairlines through the pointer, a
-     mono readout of sheet coordinates, and CAD-style snap when the
-     pointer nears a real grid line. Steps aside over words. */
-  let xhairBuilt = false;
-  let xhairWrap = null;
-  function initXhair() {
-    if (xhairBuilt) {
-      if (xhairWrap) requestAnimationFrame(() => xhairWrap.classList.add('is-on'));
-      return;
-    }
-    if (reducedMotion) return;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches) return;
-    xhairBuilt = true;
-
-    const wrap = document.createElement('div');
-    xhairWrap = wrap;
-    wrap.className = 'xhair';
-    wrap.setAttribute('aria-hidden', 'true');
-    const v = document.createElement('i'); v.className = 'xhair__v';
-    const h = document.createElement('i'); h.className = 'xhair__h';
-    const label = document.createElement('span'); label.className = 'xhair__label';
-    wrap.append(v, h, label);
-    document.body.appendChild(wrap);
-
-    const SNAP = 8;
-    let geo = null;
-    function refreshGeo() {
-      const g = gridGeometry();
-      const L = g.rect.left, T = g.rect.top;
-      geo = {
-        ox: L, oy: T,
-        xs: [L, L + g.xDiv, L + g.W - 1],
-        // horizontal lines snap only along their real extent
-        ys: [
-          { y: T, x0: L, x1: L + g.W },
-          { y: T + g.y1, x0: L, x1: L + g.xDiv },
-          { y: T + g.y2, x0: L, x1: L + g.xDiv },
-          { y: T + g.y3, x0: L + g.xDiv, x1: L + g.W },
-          { y: T + g.H - 1, x0: L, x1: L + g.W }
-        ]
-      };
-    }
-
-    let raf = 0, ex = -100, ey = -100, hidden = false;
-    function update() {
-      raf = 0;
-      if (!geo) refreshGeo();
-      let x = ex, y = ey, sx = false, sy = false;
-      for (const gx of geo.xs) if (Math.abs(ex - gx) < SNAP) { x = gx; sx = true; break; }
-      for (const gy of geo.ys) {
-        if (Math.abs(ey - gy.y) < SNAP && ex > gy.x0 - 24 && ex < gy.x1 + 24) { y = gy.y; sy = true; break; }
-      }
-      v.style.transform = 'translateX(' + x + 'px)';
-      h.style.transform = 'translateY(' + y + 'px)';
-      v.classList.toggle('is-snap', sx);
-      h.classList.toggle('is-snap', sy);
-      label.style.transform = 'translate(' + (x + 11) + 'px,' + (y + 13) + 'px)';
-      label.textContent = 'x ' + Math.round(x - geo.ox) + ' · y ' + Math.round(y - geo.oy);
-    }
-    window.addEventListener('pointermove', (e) => {
-      ex = e.clientX; ey = e.clientY;
-      const t = e.target;
-      const overWords = !!(t && t.closest &&
-        t.closest('p, h1, h2, h3, a, button, li, time, input, textarea, .tblock, dialog'));
-      if (overWords !== hidden) { hidden = overWords; wrap.classList.toggle('is-hidden', hidden); }
-      if (!raf) raf = requestAnimationFrame(update);
-    }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', () => wrap.classList.remove('is-on'));
-    document.documentElement.addEventListener('pointerenter', () => wrap.classList.add('is-on'));
-    window.addEventListener('resize', () => setTimeout(refreshGeo, 200));
-    palette.addEventListener('close', () => wrap.classList.remove('is-hidden'));
-    requestAnimationFrame(() => wrap.classList.add('is-on'));
   }
 
   function runIntro() {

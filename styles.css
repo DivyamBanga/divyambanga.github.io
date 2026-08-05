@@ -104,7 +104,7 @@ p:last-child { margin-bottom: 0; }
   max-width: 1100px;
   margin: auto;
   position: relative;
-  z-index: 1; /* content rides above the instrument layers (crosshair, construction lines) */
+  z-index: 1; /* content rides above the instrument layers (construction lines) */
 }
 .grid__build {
   border: 1px solid var(--line);
@@ -353,35 +353,6 @@ p:last-child { margin-bottom: 0; }
   background: radial-gradient(
     circle 130px at calc(var(--mx, -9999px) - var(--ox, 0px)) calc(var(--my, -9999px) - var(--oy, 0px)),
     var(--line-glow), transparent 78%);
-}
-
-/* ---------- Drafting crosshair ----------
-   Two faint hairlines track the pointer like a parallel rule on a
-   drafting table, with a small mono readout of sheet coordinates.
-   Near a real grid line they snap to it, like CAD object snap. The
-   whole instrument sits under the content and steps aside (fades)
-   whenever the pointer is over words or controls. */
-.xhair {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.45s ease;
-}
-.xhair.is-on:not(.is-hidden) { opacity: 1; }
-.xhair__v, .xhair__h { position: fixed; background: var(--ink); opacity: 0.07; }
-.xhair__v { top: 0; bottom: 0; left: 0; width: 1px; }
-.xhair__h { left: 0; right: 0; top: 0; height: 1px; }
-.xhair__v.is-snap, .xhair__h.is-snap { opacity: 0.18; }
-.xhair__label {
-  position: fixed;
-  top: 0; left: 0;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.05em;
-  color: var(--dim);
-  white-space: nowrap;
 }
 
 /* ---------- Construction lines (press G) ----------
@@ -871,7 +842,7 @@ dialog.palette::backdrop { background: transparent; }
   }
   html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
   body { padding: 0; font-size: 12px; }
-  #paint, .glowlines, .xhair, .blueprint, .pen, dialog,
+  #paint, .glowlines, .blueprint, .pen, dialog,
   .cell--contact .small, .proj__dim { display: none !important; }
   .rotator { transition: none; }
   a { color: var(--ink); }
