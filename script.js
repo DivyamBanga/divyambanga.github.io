@@ -673,21 +673,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bp && bp.classList.contains('is-on')) setTimeout(renderBlueprint, 200);
   });
 
-  /* ===== Redline dimensions on the project cards ===== */
-  if (window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches) {
-    document.querySelectorAll('.proj').forEach((card) => {
-      const tag = document.createElement('span');
-      tag.className = 'proj__dim';
-      tag.setAttribute('aria-hidden', 'true');
-      card.appendChild(tag);
-      const measure = () => {
-        tag.textContent = Math.round(card.offsetWidth) + ' × ' + Math.round(card.offsetHeight);
-      };
-      card.addEventListener('mouseenter', measure);
-      measure();
-    });
-  }
-
   /* ===== A note for the curious ===== */
   try {
     console.log(

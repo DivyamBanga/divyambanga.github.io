@@ -386,54 +386,6 @@ p:last-child { margin-bottom: 0; }
   color: var(--dim);
 }
 
-/* ---------- Redline dimensions ----------
-   Hovering a project annotates it like a shop drawing: extension
-   lines with tick caps and the card's real measurements. */
-@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
-  .proj { position: relative; }
-  .proj::before, .proj::after {
-    content: "";
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.18s ease-out, opacity 0.14s ease-out;
-  }
-  .proj::before { /* width line below the card, tick caps at the ends */
-    left: 0; right: 0; bottom: -13px; height: 5px;
-    background:
-      linear-gradient(var(--dim), var(--dim)) left center / 1px 5px no-repeat,
-      linear-gradient(var(--dim), var(--dim)) right center / 1px 5px no-repeat,
-      linear-gradient(var(--dim), var(--dim)) center center / 100% 1px no-repeat;
-    transform: scaleX(0.55);
-    transform-origin: left center;
-  }
-  .proj::after { /* height line beside the card */
-    top: 0; bottom: 0; left: -13px; width: 5px;
-    background:
-      linear-gradient(var(--dim), var(--dim)) center top / 5px 1px no-repeat,
-      linear-gradient(var(--dim), var(--dim)) center bottom / 5px 1px no-repeat,
-      linear-gradient(var(--dim), var(--dim)) center center / 1px 100% no-repeat;
-    transform: scaleY(0.55);
-    transform-origin: center top;
-  }
-  .proj:hover::before, .proj:hover::after { opacity: 0.7; transform: none; }
-  .proj__dim {
-    position: absolute;
-    left: 50%;
-    bottom: -25px;
-    transform: translateX(-50%);
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    color: var(--dim);
-    opacity: 0;
-    transition: opacity 0.14s ease-out;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  .proj:hover .proj__dim { opacity: 1; }
-}
-
 /* ---------- Type ---------- */
 h1 {
   margin: 0 0 10px;
@@ -843,7 +795,7 @@ dialog.palette::backdrop { background: transparent; }
   html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
   body { padding: 0; font-size: 12px; }
   #paint, .glowlines, .blueprint, .pen, dialog,
-  .cell--contact .small, .proj__dim { display: none !important; }
+  .cell--contact .small { display: none !important; }
   .rotator { transition: none; }
   a { color: var(--ink); }
   .proj__link[href^="http"]::after,
